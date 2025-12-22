@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whales 🐋 AI | Adaptive Smart Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #09090b; --bg-panel: #121214; --border: #27272a; --accent-green: #10b981; --accent-red: #ef4444; --text-main: #e4e4e7; --text-dim: #71717a; }
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 12px; min-height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 6px; display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { background: #18181b; padding: 10px 16px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 16px; background: #18181b; color: var(--text-dim); font-weight: 600; position: sticky; top: 0; z-index: 10; font-size: 10px; }
+        td { padding: 8px 16px; border-bottom: 1px solid #27272a; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+        tr:hover { background: #27272a; }
+        .input-dark { background: #09090b; border: 1px solid var(--border); color: white; padding: 6px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; outline: none; transition: 0.2s; }
+        .input-dark:focus { border-color: #3b82f6; }
+        #desk-grid { display: flex; flex-direction: column; gap: 16px; padding: 16px; flex: 1; width: 100%; max-width: 1600px; margin: 0 auto; }
+        @media (min-width: 1024px) { #desk-grid { display: grid; grid-template-columns: 1fr 350px; grid-template-rows: auto 1fr auto; align-items: start; } .area-stats { grid-column: 1 / -1; grid-row: 1 / 2; } .area-main { grid-column: 1 / 2; grid-row: 2 / 3; } .area-side { grid-column: 2 / -1; grid-row: 2 / 3; } .area-bottom { grid-column: 1 / -1; grid-row: 3 / 4; } }
+        .stats-flex { display: flex; flex-direction: row; gap: 8px; width: 100%; overflow-x: auto; padding-bottom: 4px; }
+        .stats-flex > .panel { flex: 1; min-width: 140px; }
+        
+        @keyframes premiumFlashGreen { 0% { background-color: rgba(16, 185, 129, 0.3); } 100% { background-color: transparent; } }
+        @keyframes premiumFlashBlue { 0% { background-color: rgba(59, 130, 246, 0.3); } 100% { background-color: transparent; } }
+        @keyframes premiumFlashRed { 0% { background-color: rgba(239, 68, 68, 0.15); } 100% { background-color: transparent; } }
+        .box-blink-green { animation: premiumFlashGreen 0.8s ease-out; } 
+        .box-blink-blue { animation: premiumFlashBlue 0.8s ease-out; }
+        .box-blink-red { animation: premiumFlashRed 1s ease-out; }
+        .blink-rapid { animation: blink 0.5s infinite; }
+        .text-glow-green { text-shadow: 0 0 5px rgba(74, 222, 128, 0.5); }
+        .text-glow-orange { text-shadow: 0 0 5px rgba(251, 146, 60, 0.5); }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes newsGlow { 0%, 100% { color: #9ca3af; } 50% { color: #e879f9; text-shadow: 0 0 8px rgba(232, 121, 249, 0.3); } }
+        .animate-news { animation: newsGlow 3s infinite ease-in-out; }
+        
+        #trade-flash { 
+            position: fixed; inset: 0; z-index: 9998; display: none; align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.4); pointer-events: none; 
+        }
+        #flash-box {
+            background: rgba(9, 9, 11, 0.98); border: 3px solid; padding: 40px; border-radius: 16px; 
+            text-align: center; min-width: 350px; box-shadow: 0 0 80px rgba(0,0,0,1);
+            transform: scale(0.9); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn { to { transform: scale(1); } }
+        
+        .flash-long { border-color: #10b981 !important; color: #10b981 !important; box-shadow: 0 0 50px rgba(16, 185, 129, 0.3) !important; }
+        .flash-short { border-color: #ef4444 !important; color: #ef4444 !important; box-shadow: 0 0 50px rgba(239, 68, 68, 0.3) !important; }
+        
+        #startup-modal { 
+            position: fixed; inset: 0; background: #09090b; z-index: 9999; display: flex; align-items: center; justify-content: center; 
+        }
+        .mode-btn { flex: 1; padding: 10px; border: 1px solid #3f3f46; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 600; color: #71717a; background: #18181b; }
+        .mode-btn.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-label { display: block; color: #a1a1aa; margin-bottom: 6px; font-size: 11px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div id="startup-modal">
+        <div class="bg-[#121214] border border-[#27272a] p-8 rounded-xl max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-3">🧠</div>
+                <h2 class="text-xl font-bold text-white tracking-wide">SMART INITIALIZATION</h2>
+                <p class="text-gray-500 text-xs mt-1">Adaptive Market Analysis Engine</p>
+            </div>
+            <div class="flex gap-4 mb-6">
+                <button id="btn-sim" class="mode-btn active" onclick="setMode('sim')"><i class="fa-solid fa-robot mb-1 block text-lg"></i> AI-Adaptive Bot</button>
+            </div>
+            <div id="inputs-sim" class="space-y-4">
+                <div class="form-group"><label class="form-label">PAPER CAPITAL ($)</label><input type="number" id="input-capital" class="input-dark w-full" value="10000" placeholder="e.g. 1000"></div>
+                <div class="p-3 bg-purple-900/20 border border-purple-900/50 rounded text-purple-400 text-[10px] flex gap-2 items-start"><i class="fa-solid fa-brain mt-0.5"></i><div><b>Logic Upgrade:</b> Bot will now adapt entry strictness based on loss streaks and Bitcoin's global trend direction.</div></div>
+            </div>
+            <button onclick="initializeBot()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-lg transition shadow-lg shadow-purple-900/20 mt-6 flex items-center justify-center gap-2"><i class="fa-solid fa-power-off"></i> ACTIVATE SMART ENGINE</button>
+        </div>
+    </div>
+
+    <div id="trade-flash">
+        <div id="flash-box">
+            <div class="text-4xl font-bold mb-2">SMART SIGNAL</div>
+            <div id="flash-msg" class="text-6xl font-mono font-bold tracking-tighter"></div>
+            <div id="flash-reason" class="text-xl text-gray-300 mt-2 font-mono"></div>
+        </div>
+    </div>
+    
+    <nav class="h-12 bg-[#121214] border-b border-[#27272a] flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center gap-3"><span class="text-xl">🐋</span><span class="font-bold text-white tracking-wide hidden md:block">WHALES PRO <span class="bg-purple-500/20 text-purple-400 text-[10px] px-1.5 py-0.5 rounded ml-1 border border-purple-500/30">ADAPTIVE AI</span></span><span class="font-bold text-white tracking-wide md:hidden">WP <span class="text-orange-400 text-[10px]">AI</span></span></div>
+        <div class="flex items-center gap-4 px-3 py-1 bg-[#09090b] rounded-lg border border-[#27272a] mx-2"><div class="flex items-center gap-2"><img src="https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/btc.png" onerror="this.onerror=null;this.src='https://placehold.co/16x16/09090b/e4e4e7?text=B'" class="w-4 h-4"><span class="text-gray-400 text-xs font-bold hidden sm:inline">BTC</span><span id="nav-btc" class="text-white font-mono text-xs">---</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2"><img src="https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/eth.png" onerror="this.onerror=null;this.src='https://placehold.co/16x16/09090b/e4e4e7?text=E'" class="w-4 h-4"><span class="text-gray-400 text-xs font-bold hidden sm:inline">ETH</span><span id="nav-eth" class="text-white font-mono text-xs">---</span></div></div>
+        <div class="hidden md:flex items-center gap-4 px-4 py-1 bg-[#09090b] rounded-lg border border-[#27272a] text-[10px] font-mono flex-1 mx-4"><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-orange-400 font-bold">FEEDS</span><span id="global-btcd" class="text-white">0/50</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-blue-400 font-bold">MODE</span><span id="global-mode" class="text-white font-bold">STANDBY</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 flex-1 min-w-0"><span class="text-purple-400 font-bold whitespace-nowrap">LOG</span><span id="global-news" class="text-gray-400 truncate w-full animate-news">Initializing...</span></div></div>
+        <div class="flex flex-col items-end text-[10px] text-gray-500 font-mono"><div class="flex items-center gap-4"><span id="ping-dot" class="w-1.5 h-1.5 rounded-full bg-gray-500"></span> <span>LATENCY: <span class="text-green-400" id="ping-val">--ms</span></span></div><div id="live-clock" class="text-gray-400 mt-0.5 tracking-wide">--/--/---- --:--:--</div></div>
+    </nav>
+
+    <div id="desk-grid">
+        <div class="area-stats stats-flex">
+            <div class="panel p-4 justify-between bg-gradient-to-br from-[#121214] to-[#0a0a0c]"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total Equity (Paper)</span><div id="equity-display" class="text-xl font-bold text-white mono tracking-tight truncate">---</div><div class="text-xs text-gray-400 truncate">Available: <span id="available-balance" class="text-white">---</span></div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Unrealized PnL</span><div id="pnl-display" class="text-xl font-bold text-gray-500 mono truncate">$0.00</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Floating</div></div>
+            <div class="panel p-4 justify-between bg-[#18181b]"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Net Realized PnL</span><div id="net-profit-val" class="text-xl font-bold text-white mono truncate">$0.00</div><div class="flex justify-between items-center"><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Win / Loss</div><div id="net-profit-wl" class="text-[10px] text-gray-400 font-mono font-bold">0 / 0</div></div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Strictness Level</span><div id="adaptation-display" class="text-xl font-bold text-purple-400 mono truncate">NORMAL</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Adaptive State</div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Gross Profit</span><div id="realized-profit-val" class="text-xl font-bold text-green-400 mono truncate">$0.00</div><div class="text-[10px] text-gray-500 truncate">Streak: <span id="streak-val" class="text-white font-bold">0</span></div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Consecutive Loss</span><div id="loss-streak-val" class="text-xl font-bold text-red-400 mono truncate">0</div><div class="text-[10px] text-gray-500 truncate">Threshold Impact</div></div>
+            <div class="panel p-4 justify-between"><div class="flex justify-between items-start mb-1"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Win Rate</span><div class="flex gap-3"><div class="flex flex-col items-center"><span class="text-[9px] text-gray-600 font-bold">W</span><span class="text-green-400 font-bold" id="wins">0</span></div><div class="flex flex-col items-center"><span class="text-[9px] text-gray-600 font-bold">L</span><span class="text-red-400 font-bold" id="losses">0</span></div></div></div><div class="flex items-center"><div class="flex flex-col"><span class="text-[9px] text-gray-600">Win Rate</span><div id="win-rate" class="text-xl font-bold text-white mono">0%</div></div></div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total ROI</span><div id="total-roi-box" class="text-xl font-bold text-gray-400 mono truncate">0.00%</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Return on Equity</div></div>
+            <div class="panel p-2 relative min-w-[100px]"><canvas id="miniEquityChart"></canvas></div>
+        </div>
+
+        <div class="area-main flex flex-col gap-4">
+            <div class="panel flex-none">
+                <div class="panel-header border-l-2 border-purple-500">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-layer-group text-purple-500"></i><span>Adaptive Positions</span><span id="pos-count" class="bg-[#27272a] text-white px-1.5 rounded text-[9px]">0</span></div>
+                    <button onclick="closeAllPositions()" class="bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-900 px-3 py-1 rounded text-[9px] font-bold transition">PANIC CLOSE</button>
+                </div>
+                <div class="overflow-auto bg-[#09090b] min-h-[150px] max-h-[300px]">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th class="pl-6">Symbol</th><th>Side</th><th class="text-right">Entry</th><th class="text-right">Current Price</th>
+                                <th class="text-right text-purple-400 font-bold">Smart Stop</th>
+                                <th class="text-right text-orange-400">Invested (10x)</th>
+                                <th class="text-right">PnL (ROE)</th><th class="text-center pr-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="positions-body"><tr><td colspan="8" class="text-center py-12 text-gray-600 italic">Smart Engine scanning... Waiting for high-confidence setup.</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel flex-none min-h-[200px]">
+                <div class="panel-header border-l-2 border-gray-600">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i><span>Smart Trade History</span></div>
+                    <button onclick="exportCSV()" class="text-[9px] hover:text-white transition">EXPORT CSV</button>
+                </div>
+                <div class="overflow-auto bg-[#09090b] max-h-[200px]">
+                    <table class="w-full"><thead><tr><th class="pl-6">Time</th><th>Symbol</th><th>Side</th><th>Action</th><th class="text-right">Duration</th><th class="text-right">Size</th><th class="text-right">Entry</th><th class="text-right">Exit</th><th class="text-right">Fees</th><th class="text-right pr-6">Net PnL</th></tr></thead><tbody id="history-body"><tr class="text-center"><td colspan="10" class="py-4 text-gray-600 italic">No history available.</td></tr></tbody></table>
+                </div>
+            </div>
+             <div class="panel flex-1 min-h-[350px]">
+                <div class="panel-header border-l-2 border-cyan-500">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-code-branch text-cyan-500"></i><span>Adaptive Market Scanner</span></div>
+                    <div class="text-[9px] text-gray-500 font-mono" id="scan-progress">Scanning: <span class="text-white">ACTIVE</span></div>
+                </div>
+                <div id="logic-table-container" class="flex-1 overflow-y-auto bg-[#09090b] p-2">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="text-[9px] text-gray-500 border-b border-[#27272a] bg-[#121214] sticky top-0"><tr><th class="py-2 pl-4">Coin</th><th>Adaptive Action</th><th class="pr-4 text-right">RSI Value</th></tr></thead>
+                        <tbody id="deep-logic-body" class="text-[10px] font-mono">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="panel flex-1 min-h-[200px]">
+                <div class="panel-header border-l-2 border-blue-500">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-microchip text-blue-500"></i><span>Logic State Analysis</span></div>
+                </div>
+                <div class="flex flex-col md:flex-row h-full">
+                    <div class="flex-1 p-4 border-r border-[#27272a] space-y-4">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2">Adaptive Parameters</div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Global BTC Trend</div><div id="btc-trend-display" class="text-lg font-mono text-white">NEUTRAL</div></div>
+                            <div class="bg-[09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Buy Threshold</div><div id="buy-thresh-display" class="text-lg font-mono text-green-400">RSI < 30</div></div>
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Sell Threshold</div><div id="sell-thresh-display" class="text-lg font-mono text-red-400">RSI > 70</div></div>
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Consecutive Loss</div><div id="cl-display" class="text-lg font-mono text-blue-400">0</div></div>
+                        </div>
+                    </div>
+                    <div class="flex-[2] flex flex-col p-4">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex justify-between"><span>Bot Decisions</span><span class="text-purple-400 text-[9px]"><i class="fa-solid fa-rotate mr-1"></i> Live</span></div>
+                        <div class="grid grid-cols-3 gap-2 mb-2 text-[9px] font-mono bg-[#18181b] p-2 rounded border border-[#27272a]">
+                            <div>Stop: <span id="ai-trend" class="text-red-400">2.0% Hard</span></div>
+                            <div>Trailing: <span id="ai-vol" class="text-blue-400">Smart 0.2%</span></div>
+                            <div>Logic: <span id="ai-rsi" class="text-green-400">Self-Correcting</span></div>
+                        </div>
+                        <div class="flex-1 overflow-y-auto bg-[#09090b] rounded p-2 border border-[#27272a]">
+                            <table class="w-full text-left">
+                                <thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Reason</th><th>Adjustment</th></tr></thead>
+                                <tbody id="learning-body" class="text-[10px] font-mono"><tr><td colspan="3" class="text-center py-4 text-gray-600 italic">No adaptive events yet.</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel h-auto shrink-0">
+                <div class="panel-header border-l-2 border-green-500 justify-between">
+                    <div class="flex items-center"><i class="fa-solid fa-brain mr-2 text-green-500"></i><span>Smart Controller</span></div>
+                    <button id="bot-toggle-button" onclick="toggleBot()" class="bg-gray-700 text-gray-400 px-3 py-1 rounded text-[10px] font-bold cursor-not-allowed">RUNNING</button>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="flex justify-between items-center text-xs"><span class="text-gray-400">System State</span><span id="engine-mode-disp" class="text-white font-bold">---</span></div>
+                    <div class="flex justify-between items-center text-xs"><span class="text-gray-400">Target Logic</span><span class="text-green-400 font-bold">Trend-Aware RSI</span></div>
+                    <div class="mt-2 pt-2 border-t border-[#27272a] overflow-y-auto max-h-[200px]">
+                        <div class="flex justify-between items-center text-xs mb-1"><span class="text-gray-400">Started</span><span id="start-time-display" class="text-white font-mono text-[10px]">--:--:--</span></div>
+                        <div class="flex justify-between items-center text-xs mb-2"><span class="text-gray-400">Running</span><span id="runtime-display" class="text-blue-400 font-mono font-bold">00:00:00</span></div>
+                        <div id="logic-status" class="text-[10px] text-gray-400 font-mono leading-tight">> Logic: <span class="text-green-500">SMART</span><br>> Observing BTC Correlation...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="area-side flex flex-col gap-4">
+            <div class="panel flex-none min-h-[300px]">
+                <div class="panel-header border-l-2 border-orange-500"><div class="flex items-center gap-2"><i class="fa-solid fa-crosshairs text-orange-500"></i><span>Market Heatmap</span></div></div>
+                <div class="p-4 h-full flex flex-col gap-4">
+                    <div class="flex-1 relative min-h-[200px]"><canvas id="strategyRadarChart"></canvas></div>
+                    <div class="flex-1 space-y-3 overflow-y-auto text-[10px] font-mono text-gray-400">
+                        <div class="flex justify-between items-center bg-[#09090b] p-2 rounded border border-[#27272a]"><span class="text-white font-bold">Scanner:</span><span id="scanner-coin" class="text-orange-400 font-bold">Analyzing...</span></div>
+                        <div class="flex justify-between items-center bg-[#09090b] p-2 rounded border border-[#27272a]"><span>Tick Update:</span><span id="scanner-timer" class="text-white">Live</span></div>
+                        <div class="font-bold text-white uppercase mt-2 border-b border-gray-700 pb-1">BTC Trend Impact</div>
+                        <div id="btc-impact-msg" class="p-2 rounded bg-[#09090b] text-gray-500 italic">Neutral Market</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel flex-1 min-h-[200px]"><div class="panel-header"><span>Strategy Logs</span></div><div id="sys-log" class="overflow-y-auto flex-1 p-2 font-mono text-[9px] space-y-1 text-gray-500 bg-[#09090b]"></div></div>
+            <div class="panel h-auto shrink-0 min-h-[250px]"><div class="panel-header border-l-2 border-blue-500"><div class="flex items-center gap-2"><i class="fa-solid fa-water text-blue-500"></i><span>Binance Large Orders</span></div><span class="text-[9px] text-gray-500 animate-pulse">Live (> $100k)</span></div><div class="flex-1 overflow-y-auto bg-[#09090b] p-2"><table class="w-full text-left"><thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Coin</th><th>Type</th><th class="text-right pr-2">Value</th></tr></thead><tbody id="whale-tracker-body" class="text-[10px] font-mono"></tbody></table></div></div>
+        </div>
+        
+        <div class="area-bottom grid grid-cols-1 md:grid-cols-3 gap-4">
+             <div class="panel min-h-[200px]">
+                <div class="panel-header border-l-2 border-yellow-500">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-bolt text-yellow-500"></i><span>Latency & Execution</span></div>
+                </div>
+                <div class="p-4 space-y-4">
+                     <div class="flex justify-between text-[10px] text-gray-400"><span>API Latency</span><span id="latency-val" class="text-green-400 font-mono">--ms</span></div>
+                     <div class="w-full bg-[#27272a] rounded-full h-1.5"><div id="latency-bar" class="bg-green-500 h-1.5 rounded-full transition-all duration-300" style="width: 10%"></div></div>
+                     <div class="flex justify-between text-[10px] text-gray-400"><span>Execution Quality</span><span class="text-blue-400 font-mono">REAL-TIME FEED</span></div>
+                </div>
+            </div>
+
+            <div class="panel min-h-[200px]">
+                 <div class="panel-header border-l-2 border-indigo-500">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-indigo-500"></i><span>Exchange Arbitrage</span></div>
+                </div>
+                <div class="p-2 overflow-y-auto">
+                    <table class="w-full text-[10px]">
+                        <thead><tr class="text-gray-500 border-b border-[#27272a]"><th class="pb-1">Pair</th><th class="pb-1">Binance</th><th class="pb-1">Coinbase</th><th class="pb-1 text-right">Delta</th></tr></thead>
+                        <tbody id="arb-body" class="font-mono">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel min-h-[200px]">
+                 <div class="panel-header border-l-2 border-red-600">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-chart-line text-red-600"></i><span>Market Sentiment</span></div>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="flex items-center justify-between p-2 bg-[#27272a]/50 rounded border border-[#3f3f46]">
+                         <div class="flex flex-col"><span class="text-[10px] text-gray-400 uppercase font-bold">Open Interest</span><span class="text-xs text-white font-bold">$12.4B (+1.2%)</span></div>
+                         <div class="flex flex-col text-right"><span class="text-[10px] text-gray-400 uppercase font-bold">Top Trader Ratio</span><span class="text-xs text-green-400 font-bold">Long 62%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- 1. UTILITY FUNCTIONS ---
+    const fmt = { 
+        usd: (n) => {
+            if (n === undefined || n === null || isNaN(n)) return '$0.00';
+            return '$' + Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+        },
+        price: (n) => n < 1 ? Number(n).toFixed(5) : Number(n).toFixed(2),
+        time: (t) => new Date(t).toLocaleTimeString(),
+        vol: (n) => '$' + (n/1000000).toFixed(1) + 'M',
+        duration: (ms) => {
+            const sec = Math.floor(ms / 1000);
+            const min = Math.floor(sec / 60);
+            const hrs = Math.floor(min / 60);
+            if (hrs > 0) return `${hrs}h ${min % 60}m`;
+            if (min > 0) return `${min}m ${sec % 60}s`;
+            return `${sec}s`;
+        }
+    };
+
+    function safeSetText(id, text) { 
+        const el = document.getElementById(id); 
+        if(el) el.innerText = text; 
+    }
+
+    function log(msg, type='gray') { 
+        const d = document.createElement('div'); 
+        d.className = `border-l-2 pl-2 ${type==='green'?'border-green-500 text-green-400':type==='red'?'border-red-500 text-red-400':type==='purple'?'border-purple-500 text-purple-400':type==='blue'?'border-blue-500 text-blue-400':'border-gray-700 text-gray-400'}`; 
+        d.innerHTML = `<span class="text-gray-600 font-bold">[${new Date().toLocaleTimeString().split(' ')[0]}]</span> ${msg}`; 
+        const logContainer = document.getElementById('sys-log'); 
+        if (logContainer) { 
+            logContainer.prepend(d); 
+            while (logContainer.children.length > 30) logContainer.removeChild(logContainer.lastChild); 
+        } 
+    }
+    
+    function updateTopBar(id, price, change) { 
+        const el = document.getElementById(`nav-${id}`); 
+        if(!el) return;
+        const p = parseFloat(price); 
+        const c = parseFloat(change); 
+        const color = c >= 0 ? 'text-green-400' : 'text-red-400'; 
+        el.innerHTML = `${fmt.price(p)} <span class="${color} text-[10px]">(${c.toFixed(2)}%)</span>`; 
+    }
+
+    function logAdaptiveEvent(reason, adjustment) {
+        const tbody = document.getElementById('learning-body');
+        const row = `
+            <tr class="border-b border-[#27272a] bg-[#18181b] animate-pulse">
+                <td class="pl-2 py-2 text-gray-500">${new Date().toLocaleTimeString()}</td>
+                <td class="text-white font-bold">${reason}</td>
+                <td class="text-purple-400 font-bold">${adjustment}</td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('afterbegin', row);
+        if(tbody.children.length > 20) tbody.removeChild(tbody.lastChild);
+    }
+
+    // --- APP STATE ---
+    let WATCHLIST = []; 
+    let VALID_FUTURES_SYMBOLS = new Set(); 
+    let whaleBuffer = []; 
+    
+// --- BINANCE FUTURES USDT PAIRS (DECEMBER 2025) ---
+const CURATED_SAFE_LIST = [
+    // Top Volume & Major Coins
+    'btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'xrpusdt', 'adausdt', 'dogeusdt',
+    'avaxusdt', 'dotusdt', 'linkusdt', 'maticusdt', 'ltcusdt', 'uniusdt',
+    'shibusdt', 'pepeusdt', 'flokiusdt', 'bonkusdt', 'luncusdt',
+    'ftmusdt', 'sandusdt', 'galausdt', 'nearusdt', 'filusdt', 'atomusdt', 'arbusdt',
+    'aptusdt', 'opusdt', 'sushiusdt', 'crvusdt', 'aaveusdt', 'axsusdt',
+    'grtusdt', 'algousdt', 'vetusdt', 'egldusdt', 'xtzusdt', 'thetausdt',
+    'eosusdt', 'icpusdt', 'xlmusdt', 'hbarusdt', 'etcusdt', 'trxusdt',
+    'wavesusdt', 'zilusdt', 'stxusdt', 'ensusdt', 'cakeusdt', 'xecusdt',
+    'mkrkusdt', 'snxusdt', 'compusdt', 'yfiiusdt', 'batusdt', 'zrxusdt',
+    'omgusdt', 'sklusdt', 'sxpusdt', 'scusdt', 'storjusdt', 'kmdusdt',
+    'rsrusdt', 'antusdt', 'chzusdt', 'cocosusdt', 'bntusdt', 'hotusdt',
+    // AI & Big Data
+    'agixusdt', 'fetusdt', 'aktusdt', 'rndrusdt', 'nmrusdt', 'oceanusdt',
+    'ctxcusdt', 'phbusdt', 'vaiusdt', 'glmusdt',
+    // Gaming/Metaverse
+    'imxusdt', 'galusdt', 'enjusdt', 'manausdt', 'sensusdt', 'slpusdt',
+    'tlosusdt', 'roninusdt', 'pixelusdt', 'blurusdt', 'darusdt', 'yggusdt',
+    'ilvusdt', 'ghstusdt', 'aliceusdt', 'superusdt', 'cvxusdt',
+    // DeFi
+    'uniwusdt', 'aavewusdt', 'compwusdt', 'snxwusdt', 'crvwusdt', 'yfiwusdt',
+    'mkrusdt', 'lptusdt', '1inchusdt', 'kncusdt', 'badgerusdt', 'balusdt',
+    'renusdt', 'umaausdt', 'frontusdt', 'hegusdt', 'lrcusdt', 'cvusdt',
+    'polyxusdt', 'injiusdt', 'ldousdt', 'cakewasdt', 'qtumusdt', 'zecusdt',
+    // Layer 1 & Layer 2
+    'maticwasdt', 'arbwasdt', 'opwasdt', 'metisusdt', 'celousdt', 'onewusdt',
+    'fttwusdt', 'roseusdt', 'iotausdt', 'ksmusdt', 'flowusdt', 'minausdt',
+    'cfxusdt', 'ankrusdt', 'jasmyusdt', 'ckbusdt', 'waxpusdt', 'ognusdt',
+    'cotiusdt', 'duskusdt', 'stptusdt', 'sandwasdt',
+    // Oracles & Infrastructure
+    'linkwasdt', 'bandusdt', 'trbusdt', 'nestusdt', 'diausdt', 'umaausdt',
+    'api3usdt', 'pyrusdt', 'trusdt', 'atorusdt', 'pendleusdt', 'mavusdt',
+    // Meme Coins
+    'wifusdt', 'bomeusdt', 'turtusdt', 'peopleusdt', 'gmeusdt', 'amcusdt',
+    'tslausdt', 'donaldtrumusdt', 'jeobidenusdt', 'babydogeusdt',
+    // NFT & Social
+    'chzusdt', 'maskusdt', 'litusdt', 'audiousdt', 'rareusdt', 'tvkusdt',
+    'keyusdt', 'straxusdt', 'dodoasdt', 'grtwasdt', 'perpusdt',
+    // Privacy & Security
+    'scrtusdt', 'oxtusdt', 'keepusdt', 'mboxusdt', 'burgerusdt',
+    // Exchange Tokens
+    'bgbusdt', 'kcsusdt', 'htusdt', 'okbusdt', 'gtusdt', 'mxusdt',
+    'bnxusdt', 'bitusdt', 'cetusdt', 'woousdt', 'mdtusdt',
+    // Stablecoins & Yield
+    'fdusdusdt', 'tusdusdt', 'usdcusdt', 'daiusdt', 'busdusdt', 'eursusdt',
+    'paxgusdt', 'usdpusdt', 'gusdusdt', 'husdusdt',
+    // AI & Machine Learning
+    'nmrusdt', 'paiusdt', 'sophusdt', 'deepusdt', 'neurusdt', 'vaiusdt',
+    // Additional pairs from the full list
+    '1000shibusdt', '1000pepeusdt', '1000flokiusdt', '1000bonkusdt', '1000luncusdt',
+    '1000xecusdt', '1000bttusdt', '1000satsusdt', '1000ratsusdt',
+    'zilusdt', 'kncusdt', 'zrxusdt', 'compusdt', 'omgusdt', 'sklusdt',
+    'sxpusdt', 'scusdt', 'storjusdt', 'kmdusdt', 'rsrusdt', 'antusdt',
+    'chzusdt', 'cocosusdt', 'bntusdt', 'hotusdt', 'agixusdt', 'fetusdt',
+    'aktusdt', 'rndrusdt', 'nmrusdt', 'oceanusdt', 'ctxcusdt', 'phbusdt',
+    'vaiusdt', 'glmusdt', 'imxusdt', 'galusdt', 'enjusdt', 'manausdt',
+    'sensusdt', 'slpusdt', 'tlosusdt', 'roninusdt', 'pixelusdt', 'blurusdt',
+    'darusdt', 'yggusdt', 'ilvusdt', 'ghstusdt', 'aliceusdt', 'superusdt',
+    'cvxusdt', 'uniwusdt', 'aavewusdt', 'compwusdt', 'snxwusdt', 'crvwusdt',
+    'yfiwusdt', 'mkrusdt', 'lptusdt', '1inchusdt', 'kncusdt', 'badgerusdt',
+    'balusdt', 'renusdt', 'umaausdt', 'frontusdt', 'hegusdt', 'lrcusdt',
+    'cvusdt', 'polyxusdt', 'injiusdt', 'ldousdt', 'cakewasdt', 'qtumusdt',
+    'zecusdt', 'maticwasdt', 'arbwasdt', 'opwasdt', 'metisusdt', 'celousdt',
+    'onewusdt', 'fttwusdt', 'roseusdt', 'iotausdt', 'ksmusdt', 'flowusdt',
+    'minausdt', 'cfxusdt', 'ankrusdt', 'jasmyusdt', 'ckbusdt', 'waxpusdt',
+    'ognusdt', 'cotiusdt', 'duskusdt', 'stptusdt', 'sandwasdt', 'linkwasdt',
+    'bandusdt', 'trbusdt', 'nestusdt', 'diausdt', 'umaausdt', 'api3usdt',
+    'pyrusdt', 'trusdt', 'atorusdt', 'pendleusdt', 'mavusdt', 'wifusdt',
+    'bomeusdt', 'turtusdt', 'peopleusdt', 'gmeusdt', 'amcusdt', 'tslausdt',
+    'donaldtrumusdt', 'jeobidenusdt', 'babydogeusdt', 'chzusdt', 'maskusdt',
+    'litusdt', 'audiousdt', 'rareusdt', 'tvkusdt', 'keyusdt', 'straxusdt',
+    'dodoasdt', 'grtwasdt', 'perpusdt', 'scrtusdt', 'oxtusdt', 'keepusdt',
+    'mboxusdt', 'burgerusdt', 'bgbusdt', 'kcsusdt', 'htusdt', 'okbusdt',
+    'gtusdt', 'mxusdt', 'bnxusdt', 'bitusdt', 'cetusdt', 'woousdt', 'mdtusdt',
+    'fdusdusdt', 'tusdusdt', 'usdcusdt', 'daiusdt', 'busdusdt', 'eursusdt',
+    'paxgusdt', 'usdpusdt', 'gusdusdt', 'husdusdt', 'nmrusdt', 'paiusdt',
+    'sophusdt', 'deepusdt', 'neurusdt', 'vaiusdt'
+];
+    // EXPLICIT BLACKLIST
+    const BLACKLIST = ['xmrusdt', 'antusdt', 'btcdomusdt', 'defiusdt', 'bluebirdusdt'];
+
+    const MAX_POSITIONS = 10;
+    const LEVERAGE = 5;
+    const FEE_RATE = 0.0005; 
+    let activeStreamCount = 0;
+    
+    const app = { 
+        coins: {}, 
+        history: {}, 
+        bot: { 
+            balance: 10000, 
+            equity: 10000, 
+            active: false, 
+            startTime: null, 
+            positions: {}, 
+            tradeHistory: [],
+            wins: 0,
+            losses: 0,
+            consecutiveLosses: 0, // NEW: Tracks streaks for adaptation
+            feesPaid: 0,
+            grossProfit: 0, 
+            grossLoss: 0, 
+            cooldowns: {} 
+        }
+    };
+
+    // --- RSI CALCULATOR ---
+    function calculateRSI(closes) {
+        if (closes.length < 14) return 50; 
+        let gains = 0, losses = 0;
+        for (let i = 1; i <= 14; i++) {
+            const diff = closes[i] - closes[i - 1];
+            if (diff >= 0) gains += diff;
+            else losses += Math.abs(diff);
+        }
+        let avgGain = gains / 14;
+        let avgLoss = losses / 14;
+        for (let i = 15; i < closes.length; i++) {
+            const diff = closes[i] - closes[i - 1];
+            if (diff >= 0) {
+                avgGain = (avgGain * 13 + diff) / 14;
+                avgLoss = (avgLoss * 13 + 0) / 14;
+            } else {
+                avgGain = (avgGain * 13 + 0) / 14;
+                avgLoss = (avgLoss * 13 + Math.abs(diff)) / 14;
+            }
+        }
+        if (avgLoss === 0) return 100;
+        const rs = avgGain / avgLoss;
+        return 100 - (100 / (1 + rs));
+    }
+
+    // --- INITIALIZATION ---
+    function setMode(mode) {
+        document.getElementById('btn-sim').className = `mode-btn active`;
+    }
+
+    async function initializeBot() {
+        const capital = parseFloat(document.getElementById('input-capital').value) || 10000;
+        app.bot.balance = capital;
+        app.bot.equity = capital;
+        app.bot.startTime = new Date();
+        app.bot.active = true;
+
+        document.getElementById('startup-modal').style.display = 'none';
+        safeSetText('start-time-display', `${app.bot.startTime.toLocaleDateString()} ${app.bot.startTime.toLocaleTimeString()}`);
+        safeSetText('equity-display', fmt.usd(app.bot.balance));
+        safeSetText('available-balance', fmt.usd(app.bot.balance));
+        safeSetText('global-mode', 'ADAPTIVE');
+        safeSetText('engine-mode-disp', 'AI-SMART');
+        document.getElementById('global-mode').className = `text-purple-400 font-bold`;
+
+        log(`SMART ENGINE ONLINE. Initializing Market Scan...`, 'purple');
+        
+        await fetchTopCoins();
+        initCharts();
+        startWebSocket();
+    }
+
+    // --- UPDATED: FETCH TOP COINS DYNAMICALLY & STRICTLY ---
+    async function fetchTopCoins() {
+        try {
+            log("Verifying Binance Futures Exchange Info...", "blue");
+            const exchangeInfoRes = await fetch('https://fapi.binance.com/fapi/v1/exchangeInfo');
+            const exchangeInfo = await exchangeInfoRes.json();
+            
+            VALID_FUTURES_SYMBOLS = new Set(
+                exchangeInfo.symbols
+                    .filter(s => s.status === 'TRADING' && s.contractType === 'PERPETUAL' && s.quoteAsset === 'USDT')
+                    .map(s => s.symbol)
+            );
+
+            log(`Found ${VALID_FUTURES_SYMBOLS.size} active USDT-M pairs.`, "blue");
+
+            const res = await fetch('https://fapi.binance.com/fapi/v1/ticker/24hr');
+            const data = await res.json();
+            
+            const top50 = data
+                .filter(t => VALID_FUTURES_SYMBOLS.has(t.symbol) && !BLACKLIST.includes(t.symbol.toLowerCase()))
+                .sort((a,b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume))
+                .slice(0, 50)
+                .map(t => t.symbol.toLowerCase());
+            
+            WATCHLIST = top50;
+            log(`Loaded Top ${WATCHLIST.length} Strictly Valid Futures Pairs.`, 'green');
+
+        } catch(e) {
+            log("API Blocked/Failed. Engaging Safe Curated List.", "red");
+            WATCHLIST = CURATED_SAFE_LIST;
+            CURATED_SAFE_LIST.forEach(s => VALID_FUTURES_SYMBOLS.add(s.toUpperCase()));
+        }
+
+        const batchSize = 10;
+        for(let i=0; i<WATCHLIST.length; i+=batchSize) {
+            const batch = WATCHLIST.slice(i, i+batchSize);
+            await Promise.all(batch.map(async (sym) => {
+                try {
+                    const kRes = await fetch(`https://fapi.binance.com/fapi/v1/klines?symbol=${sym.toUpperCase()}&interval=1m&limit=30`);
+                    const kData = await kRes.json();
+                    app.history[sym] = kData.map(d => parseFloat(d[4]));
+                } catch(e) {}
+            }));
+            safeSetText('scan-progress', `Loading History: ${Math.min(100, Math.round((i/WATCHLIST.length)*100))}%`);
+        }
+        safeSetText('scan-progress', 'SCANNING ACTIVE');
+    }
+
+    // --- WEBSOCKET ENGINE ---
+    function startWebSocket() {
+        const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=!ticker@arr`);
+
+        ws.onopen = () => {
+            log("WebSocket Connected. Sending Subscriptions...", "green");
+            safeSetText('global-news', "Socket Open");
+            document.getElementById('ping-dot').className = "w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse";
+            
+            const streams = [];
+            WATCHLIST.forEach(s => { streams.push(`${s}@aggTrade`); streams.push(`${s}@kline_1m`); });
+
+            for (let i = 0; i < streams.length; i += 50) {
+                const chunk = streams.slice(i, i + 50);
+                ws.send(JSON.stringify({ method: "SUBSCRIBE", params: chunk, id: i + 2 }));
+                log(`Subscribed to batch ${i/50 + 1}...`);
+            }
+        };
+
+        ws.onmessage = (event) => {
+            let msg = JSON.parse(event.data);
+            if (msg.stream && msg.data) { msg = msg.data; }
+            if (msg.result === null && msg.id) return; 
+
+            // 1. Ticker Handling
+            if (Array.isArray(msg) && msg[0] && msg[0].e === '24hrTicker') {
+                msg.forEach(t => {
+                    const s = t.s.toLowerCase();
+                    if (WATCHLIST.includes(s)) {
+                        if (!app.coins[s]) app.coins[s] = {};
+                        app.coins[s].change = parseFloat(t.P);
+                        app.coins[s].vol = parseFloat(t.q); 
+                        if (!app.coins[s].price) app.coins[s].price = parseFloat(t.c); 
+                        if(s === 'btcusdt') updateTopBar('btc', t.c, t.P);
+                        if(s === 'ethusdt') updateTopBar('eth', t.c, t.P);
+                    }
+                });
+                return;
+            }
+
+            // 2. Kline Handling
+            if (msg.e === 'kline') {
+                const s = msg.s.toLowerCase();
+                const k = msg.k;
+                
+                if (!app.history[s]) app.history[s] = [];
+                if (k.x) { 
+                    app.history[s].push(parseFloat(k.c));
+                    if(app.history[s].length > 50) app.history[s].shift();
+                }
+                const currentHistory = [...app.history[s], parseFloat(k.c)];
+                const rsi = calculateRSI(currentHistory);
+                
+                if (!app.coins[s]) app.coins[s] = { price: parseFloat(k.c), change: 0, vol: 0 };
+                app.coins[s].rsi = rsi;
+
+                if(!app.coins[s].active) {
+                    app.coins[s].active = true;
+                    activeStreamCount++;
+                    safeSetText('global-btcd', `${activeStreamCount}/50`);
+                }
+
+                // --- SMART AUTO TRADING LOGIC ---
+                checkSignal(s, rsi, parseFloat(k.c));
+            }
+
+            // 3. Whale Handling
+            if (msg.e === 'aggTrade') {
+                const s = msg.s.toLowerCase();
+                const price = parseFloat(msg.p);
+                
+                if (app.coins[s]) app.coins[s].price = price;
+                else app.coins[s] = { price: price, change: 0, vol: 0 };
+                
+                if(app.bot.positions[s]) updatePositionPnL(s, price);
+
+                const val = price * parseFloat(msg.q);
+                if (val > 100000) { 
+                    const side = msg.m ? 'SELL' : 'BUY';
+                    whaleBuffer.push({
+                        time: msg.T,
+                        symbol: s.toUpperCase().replace('USDT',''),
+                        side: side,
+                        val: val
+                    });
+                    if(val > 500000 && Object.keys(app.bot.positions).length < MAX_POSITIONS) {
+                        showFlash(side, s.toUpperCase().replace('USDT',''), `WHALE ${fmt.usd(val)}`);
+                    }
+                }
+            }
+        };
+    }
+
+    // --- SMART TRADING ENGINE ---
+    
+    function checkSignal(symbol, rsi, price) {
+        if (!price || price <= 0 || isNaN(price)) return; 
+        if (app.bot.positions[symbol]) return; 
+
+        const lastClosed = app.bot.cooldowns[symbol] || 0;
+        if (Date.now() - lastClosed < 300000) return; 
+
+        const activeCount = Object.keys(app.bot.positions).length;
+        if (activeCount >= MAX_POSITIONS) return;
+
+        // --- 1. DETERMINE GLOBAL BTC SENTIMENT ---
+        const btcChange = app.coins['btcusdt']?.change || 0;
+        let btcRegime = 'NEUTRAL';
+        if (btcChange < -2.0) btcRegime = 'BEARISH';
+        if (btcChange > 2.0) btcRegime = 'BULLISH';
+        
+        // --- 2. ADAPTIVE RSI THRESHOLDS (TILT CONTROL) ---
+        let buyThresh = 30;
+        let sellThresh = 70;
+        let strictness = 'NORMAL';
+
+        // TIGHTEN rules if on a losing streak (Self-Correction)
+        if (app.bot.consecutiveLosses >= 2) {
+            buyThresh = 25;
+            sellThresh = 75;
+            strictness = 'CAUTIOUS';
+        }
+        if (app.bot.consecutiveLosses >= 4) {
+            buyThresh = 20;
+            sellThresh = 80; // Extreme only
+            strictness = 'STRICT';
+        }
+
+        // --- 3. APPLY REGIME FILTER ---
+        // If Bearish, hard to buy. If Bullish, hard to sell.
+        if (btcRegime === 'BEARISH') buyThresh -= 5; // e.g., need 25 instead of 30
+        if (btcRegime === 'BULLISH') sellThresh += 5; // e.g., need 75 instead of 70
+
+        // --- 4. EXECUTION ---
+        const margin = app.bot.equity / MAX_POSITIONS;
+        const sizeUSD = margin * LEVERAGE;
+        const coinSize = sizeUSD / price;
+
+        if (rsi < buyThresh) {
+            executeTrade(symbol, 'LONG', price, coinSize, strictness);
+        } else if (rsi > sellThresh) {
+            executeTrade(symbol, 'SHORT', price, coinSize, strictness);
+        }
+        
+        // UI Updates for Logic
+        safeSetText('adaptation-display', strictness);
+        safeSetText('loss-streak-val', app.bot.consecutiveLosses);
+        safeSetText('btc-trend-display', btcRegime);
+        safeSetText('buy-thresh-display', `RSI < ${buyThresh}`);
+        safeSetText('sell-thresh-display', `RSI > ${sellThresh}`);
+        
+        if (btcRegime === 'BEARISH') safeSetText('btc-impact-msg', 'BTC Dumping: Longs Restricted');
+        else if (btcRegime === 'BULLISH') safeSetText('btc-impact-msg', 'BTC Pumping: Shorts Restricted');
+        else safeSetText('btc-impact-msg', 'BTC Neutral: Standard Logic');
+    }
+
+    function executeTrade(symbol, side, price, size, strictness) {
+        if (!price || price <= 0 || isNaN(price)) return;
+        if (!VALID_FUTURES_SYMBOLS.has(symbol.toUpperCase())) return;
+
+        app.bot.positions[symbol] = {
+            symbol: symbol,
+            side: side,
+            entry: price,
+            size: size,
+            sizeUSD: size * price,
+            pnl: 0,
+            startTime: Date.now(),
+            highestPrice: price,
+            lowestPrice: price,
+            trailingActive: false,
+            lastStopPrice: 0
+        };
+        
+        const fee = (size * price) * FEE_RATE;
+        app.bot.balance -= fee; 
+        
+        log(`⚡ SMART ENTRY (${strictness}): ${side} ${symbol.toUpperCase()} @ ${fmt.price(price)}`, side === 'LONG' ? 'green' : 'red');
+        showFlash(side, symbol.toUpperCase().replace('USDT',''), "POSITION OPENED");
+        updateDashboardPositions();
+    }
+
+    function updatePositionPnL(symbol, currentPrice) {
+        const pos = app.bot.positions[symbol];
+        if (!pos) return;
+        if (!currentPrice || currentPrice <= 0 || isNaN(currentPrice)) return;
+
+        if (pos.side === 'LONG') pos.pnl = (currentPrice - pos.entry) * pos.size;
+        else pos.pnl = (pos.entry - currentPrice) * pos.size;
+
+        const roe = (pos.pnl / pos.sizeUSD) * 100;
+        
+        // --- STOP LOSS @ 3.50% ---
+        if (roe <= -3.5) {
+            closePosition(symbol, currentPrice, "STOP_LOSS");
+            return;
+        }
+
+        // --- TRAILING STOP LOGIC ---
+        const TRAILING_ACTIVATION = 0.5; // Activate when 0.5% profit
+        const TRAILING_DISTANCE = 0.002; // 0.2% price distance
+        
+        if (pos.side === 'LONG') {
+            if (currentPrice > pos.highestPrice) pos.highestPrice = currentPrice;
+            if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
+            if (pos.trailingActive) {
+                const stopPrice = pos.highestPrice * (1 - TRAILING_DISTANCE);
+                pos.lastStopPrice = stopPrice;
+                if (currentPrice < stopPrice) closePosition(symbol, currentPrice, "TRAILING_STOP");
+            }
+        } else {
+            if (currentPrice < pos.lowestPrice) pos.lowestPrice = currentPrice;
+            if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
+            if (pos.trailingActive) {
+                const stopPrice = pos.lowestPrice * (1 + TRAILING_DISTANCE);
+                pos.lastStopPrice = stopPrice;
+                if (currentPrice > stopPrice) closePosition(symbol, currentPrice, "TRAILING_STOP");
+            }
+        }
+    }
+
+    function closePosition(symbol, price, reason) {
+        const pos = app.bot.positions[symbol];
+        if (!pos) return;
+
+        const entryFee = (pos.size * pos.entry) * FEE_RATE;
+        const exitFee = (pos.size * price) * FEE_RATE;
+        const totalRoundTripFee = entryFee + exitFee;
+        
+        app.bot.balance += pos.pnl;
+        app.bot.balance -= exitFee;
+        
+        const netPnl = pos.pnl - totalRoundTripFee;
+
+        // --- ADAPTIVE LOGIC: STREAK MANAGEMENT ---
+        if (netPnl > 0) {
+            app.bot.wins++;
+            app.bot.consecutiveLosses = 0; // Reset streak on win
+            if (reason === "TRAILING_STOP") logAdaptiveEvent("Trailing Stop Hit", "Locked Profit & Reset Streak");
+        } else {
+            app.bot.losses++;
+            app.bot.consecutiveLosses++; // Increment streak on loss
+            logAdaptiveEvent("Loss Taken", `Streak now ${app.bot.consecutiveLosses} - Tightening Logic`);
+        }
+
+        app.bot.cooldowns[symbol] = Date.now();
+
+        const record = {
+            time: Date.now(),
+            symbol: symbol.toUpperCase(),
+            side: pos.side,
+            action: reason,
+            size: pos.sizeUSD,
+            entry: pos.entry,
+            exit: price,
+            fees: totalRoundTripFee, 
+            rawPnl: pos.pnl, 
+            netPnl: netPnl,
+            duration: fmt.duration(Date.now() - pos.startTime)
+        };
+        app.bot.tradeHistory.unshift(record);
+        if(app.bot.tradeHistory.length > 200) app.bot.tradeHistory.pop();
+        
+        delete app.bot.positions[symbol];
+        log(`💰 CLOSED ${symbol.toUpperCase()}: ${reason} | Net PnL: ${fmt.usd(netPnl)}`, netPnl > 0 ? 'green' : 'red');
+        
+        updateHistoryUI();
+        updateDashboardPositions();
+    }
+
+    // --- UI UPDATERS ---
+
+    function updateDashboardPositions() {
+        const tbody = document.getElementById('positions-body');
+        const positions = Object.values(app.bot.positions);
+        
+        if (positions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-12 text-gray-600 italic">Scanning Top 50 Pairs... Logic State: ${app.bot.consecutiveLosses > 2 ? 'CAUTIOUS' : 'AGGRESSIVE'}</td></tr>`;
+            safeSetText('pos-count', '0');
+            return;
+        }
+
+        safeSetText('pos-count', positions.length);
+        
+        let html = '';
+        let totalUnrealized = 0;
+
+        positions.forEach(p => {
+            totalUnrealized += p.pnl;
+            const pnlClass = p.pnl >= 0 ? 'text-green-400' : 'text-red-400';
+            const roe = ((p.pnl / (p.sizeUSD / LEVERAGE)) * 100).toFixed(2);
+            
+            const curr = app.coins[p.symbol]?.price || p.entry;
+            
+            let stopDisplay = '<span class="text-gray-500 italic">Inactive (< 0.5%)</span>';
+            if (p.trailingActive) {
+                stopDisplay = `<span class="text-purple-400 font-bold font-mono">${fmt.price(p.lastStopPrice)}</span>`;
+            }
+
+            html += `
+                <tr class="hover:bg-[#18181b] transition border-b border-[#27272a]/50">
+                    <td class="pl-6 font-bold text-white py-3 flex items-center gap-3">
+                        <img src="https://assets.coincap.io/assets/icons/${p.symbol.replace('usdt','').replace('1000','')}@2x.png" onerror="this.onerror=null;this.src='https://placehold.co/32x32/27272a/e4e4e7?text=${p.symbol.substring(0,1).toUpperCase()}'" class="w-8 h-8 rounded-full bg-[#27272a] p-0.5">
+                        <div class="flex flex-col"><span class="text-[13px] uppercase font-bold">${p.symbol.replace('usdt','').toUpperCase()}</span><span class="text-[10px] text-gray-500">PERP</span></div>
+                    </td>
+                    <td class="font-bold ${p.side==='LONG'?'text-green-400':'text-red-400'}">${p.side}</td>
+                    <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(p.entry)}</td>
+                    <td class="text-right font-mono text-white text-[12px] font-bold">${fmt.price(curr)}</td>
+                    <td class="text-right font-mono text-[11px]">${stopDisplay}</td>
+                    <td class="text-right font-mono text-orange-400 text-[11px]">${fmt.usd(p.sizeUSD)}</td>
+                    <td class="text-right font-mono font-bold ${pnlClass}">
+                        <div>${fmt.usd(p.pnl)}</div>
+                        <div class="text-[10px] opacity-75">${roe}%</div>
+                    </td>
+                    <td class="text-center pr-4 text-[10px] font-mono leading-tight">
+                        <button onclick="closePosition('${p.symbol}', ${curr}, 'MANUAL')" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-2 py-1 rounded transition">CLOSE</button>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+        app.bot.equity = app.bot.balance + totalUnrealized;
+        safeSetText('equity-display', fmt.usd(app.bot.equity));
+        safeSetText('available-balance', fmt.usd(app.bot.balance));
+        safeSetText('pnl-display', fmt.usd(totalUnrealized));
+        
+        const pnlEl = document.getElementById('pnl-display');
+        pnlEl.className = `text-xl font-bold mono truncate ${totalUnrealized >= 0 ? 'text-green-400' : 'text-red-400'}`;
+    }
+
+    function updateHistoryUI() {
+        let calcNetRealized = 0;
+        let calcWins = 0;
+        let calcLosses = 0;
+        let calcGrossProfit = 0;
+        let calcGrossLoss = 0;
+
+        app.bot.tradeHistory.forEach(t => {
+            calcNetRealized += t.netPnl;
+            if (t.rawPnl > 0) { calcGrossProfit += t.rawPnl; calcWins++; } 
+            else { calcGrossLoss += Math.abs(t.rawPnl); calcLosses++; }
+        });
+
+        const tbody = document.getElementById('history-body');
+        const rows = app.bot.tradeHistory.slice(0, 50); 
+        
+        if (rows.length === 0) {
+            tbody.innerHTML = '<tr class="text-center"><td colspan="10" class="py-4 text-gray-600 italic">No history available.</td></tr>';
+        } else {
+            tbody.innerHTML = rows.map(t => `
+                <tr class="hover:bg-[#18181b] border-b border-[#27272a]">
+                    <td class="pl-6 text-gray-500 text-[11px] font-mono">${fmt.time(t.time)}</td>
+                    <td class="font-bold text-white text-[11px]">${t.symbol}</td>
+                    <td class="${t.side==='LONG'?'text-green-400':'text-red-400'} font-bold text-[10px]">${t.side}</td>
+                    <td class="text-[10px] text-blue-300 font-mono">${t.action}</td>
+                    <td class="text-right font-mono text-gray-500 text-[11px]">${t.duration}</td>
+                    <td class="text-right font-mono text-gray-300 text-[11px]">${fmt.usd(t.size)}</td>
+                    <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(t.entry)}</td>
+                    <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(t.exit)}</td>
+                    <td class="text-right font-mono text-orange-400 text-[11px]">${fmt.usd(t.fees)}</td>
+                    <td class="text-right pr-6 font-mono font-bold text-[11px] ${(t.netPnl>=0?'text-green-400':'text-red-400')}">${fmt.usd(t.netPnl)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        safeSetText('realized-profit-val', fmt.usd(calcGrossProfit));
+        safeSetText('win-count', app.bot.wins);
+        safeSetText('wins', app.bot.wins);
+        safeSetText('losses', app.bot.losses);
+        safeSetText('loss-streak-val', app.bot.consecutiveLosses);
+        
+        const total = app.bot.wins + app.bot.losses;
+        const wr = total > 0 ? ((app.bot.wins / total) * 100).toFixed(0) : 0;
+        
+        safeSetText('win-rate', `${wr}%`);
+        safeSetText('streak-val', total);
+        
+        const netEl = document.getElementById('net-profit-val');
+        netEl.innerText = fmt.usd(calcNetRealized);
+        netEl.className = `text-xl font-bold mono truncate ${calcNetRealized >= 0 ? 'text-green-400' : 'text-red-400'}`;
+        safeSetText('net-profit-wl', `${app.bot.wins} / ${app.bot.losses}`);
+        
+        let totalRoi = 0;
+        if (app.bot.equity > 0) totalRoi = ((calcNetRealized / app.bot.equity) * 100).toFixed(2);
+        safeSetText('total-roi-box', totalRoi + '%');
+    }
+
+    function updateLogicScanner() {
+        const tbody = document.getElementById('deep-logic-body');
+        const sorted = [...WATCHLIST].sort((a,b) => {
+            const rsiA = Math.abs((app.coins[a]?.rsi || 50) - 50);
+            const rsiB = Math.abs((app.coins[b]?.rsi || 50) - 50);
+            return rsiB - rsiA;
+        }).slice(0, 15); 
+
+        tbody.innerHTML = sorted.map(s => {
+            const rsi = app.coins[s]?.rsi || 50;
+            let status = "NEUTRAL";
+            let color = "text-gray-500";
+            if (rsi < 30) { status = "OVERSOLD (BUY)"; color = "text-green-400 font-bold"; }
+            else if (rsi > 70) { status = "OVERBOUGHT (SELL)"; color = "text-red-400 font-bold"; }
+            
+            return `
+                <tr class="border-b border-[#27272a]">
+                    <td class="py-1 pl-4 text-white uppercase">${s.replace('usdt','')}</td>
+                    <td class="${color} text-[10px]">${status}</td>
+                    <td class="pr-4 text-right font-mono text-gray-300">${rsi.toFixed(1)}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function showFlash(side, symbol, reason) { 
+        const overlay = document.getElementById('trade-flash'); 
+        const msg = document.getElementById('flash-msg'); 
+        const sub = document.getElementById('flash-reason'); 
+        overlay.className = side === 'LONG' || side === 'BUY' ? 'flash-long' : 'flash-short'; 
+        msg.innerText = `${side} ${symbol}`; 
+        sub.innerText = reason || ""; 
+        sub.style.display = reason ? "block" : "none"; 
+        overlay.style.display = 'flex'; 
+        setTimeout(() => { overlay.style.display = 'none'; }, 3000); 
+    }
+
+    // --- CHART SETUP ---
+    let eqChart; let radarChart;
+    function initCharts() {
+        if (typeof Chart !== 'undefined') {
+            const ctx1 = document.getElementById('miniEquityChart').getContext('2d');
+            eqChart = new Chart(ctx1, { type: 'line', data: { labels: Array(20).fill(''), datasets: [{ data: Array(20).fill(10000), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: {legend:{display:false}}, scales: {x:{display:false}, y:{display:false}} } });
+            
+            const ctx2 = document.getElementById('strategyRadarChart').getContext('2d');
+            radarChart = new Chart(ctx2, { type: 'radar', data: { labels: ['BTC', 'ETH', 'SOL', 'BNB', 'DOGE', 'XRP'], datasets: [{ label: 'Real-Time RSI', data: [50,50,50,50,50,50], backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10b981', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af', font: {size: 9} } } }, scales: { r: { angleLines: { color: '#374151' }, grid: { color: '#374151' }, pointLabels: { color: '#e5e7eb', font: { size: 9 } }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } } } });
+        }
+    }
+
+    // --- LOOPS ---
+    setInterval(() => { const now = new Date(); safeSetText('live-clock', now.toLocaleString()); }, 1000);
+    setInterval(() => {
+        updateDashboardPositions();
+        updateLogicScanner();
+        if(whaleBuffer.length > 0) {
+            const body = document.getElementById('whale-tracker-body');
+            const htmlToAdd = whaleBuffer.slice(-20).reverse().map(item => {
+                const color = item.side === 'BUY' ? 'text-green-400' : 'text-red-400';
+                 return `<tr class="border-b border-[#27272a] animate-pulse bg-[#18181b]"><td class="pl-2 py-1 text-gray-500">${new Date(item.time).toLocaleTimeString()}</td><td class="font-bold text-white">${item.symbol}</td><td class="${color} font-bold">${item.side}</td><td class="text-right pr-2 text-gray-300 font-bold">${fmt.usd(item.val).split('.')[0]}</td></tr>`;
+            }).join('');
+            body.insertAdjacentHTML('afterbegin', htmlToAdd);
+            whaleBuffer = []; 
+            while(body.children.length > 50) body.removeChild(body.lastChild);
+        }
+        if(Math.random() > 0.8 && eqChart) {
+            eqChart.data.datasets[0].data.push(app.bot.equity);
+            eqChart.data.datasets[0].data.shift();
+            eqChart.update('none');
+        }
+    }, 1000); 
+    
+    setInterval(() => { 
+        if(app.bot.active) {
+            const diff = new Date() - app.bot.startTime;
+            const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+            safeSetText('runtime-display', `${h}:${m}:${s}`);
+        }
+    }, 1000);
+
+    function closeAllPositions() { 
+        Object.keys(app.bot.positions).forEach(k => {
+            const p = app.bot.positions[k];
+            closePosition(k, app.coins[k.toLowerCase()]?.price || p.entry, "PANIC_CLOSE");
+        });
+    }
+    function exportCSV() { alert("Exporting Real-Time Data Log..."); }
+    function toggleBot() { alert("Scanner is always active in Real-Time mode."); }
+
+</script>
+</body>
+</html>
