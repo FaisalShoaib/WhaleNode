@@ -725,8 +725,8 @@ const CURATED_SAFE_LIST = [
 
         const roe = (pos.pnl / pos.sizeUSD) * 100;
         
-        // --- STOP LOSS @ 3.50% ---
-        if (roe <= -3.5) {
+        // --- STOP LOSS @ 80% ---
+        if (roe <= -80) {
             closePosition(symbol, currentPrice, "STOP_LOSS");
             return;
         }
