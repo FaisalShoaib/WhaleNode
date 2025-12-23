@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whales 🐋 AI | Adaptive Smart Engine</title>
+    <title>Whales 🐋 AI | Pro Logic Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -32,9 +32,11 @@
         @keyframes premiumFlashGreen { 0% { background-color: rgba(16, 185, 129, 0.3); } 100% { background-color: transparent; } }
         @keyframes premiumFlashBlue { 0% { background-color: rgba(59, 130, 246, 0.3); } 100% { background-color: transparent; } }
         @keyframes premiumFlashRed { 0% { background-color: rgba(239, 68, 68, 0.15); } 100% { background-color: transparent; } }
+        @keyframes premiumFlashPurple { 0% { background-color: rgba(168, 85, 247, 0.3); } 100% { background-color: transparent; } }
         .box-blink-green { animation: premiumFlashGreen 0.8s ease-out; } 
         .box-blink-blue { animation: premiumFlashBlue 0.8s ease-out; }
         .box-blink-red { animation: premiumFlashRed 1s ease-out; }
+        .box-blink-purple { animation: premiumFlashPurple 0.8s ease-out; }
         .blink-rapid { animation: blink 0.5s infinite; }
         .text-glow-green { text-shadow: 0 0 5px rgba(74, 222, 128, 0.5); }
         .text-glow-orange { text-shadow: 0 0 5px rgba(251, 146, 60, 0.5); }
@@ -55,7 +57,9 @@
         
         .flash-long { border-color: #10b981 !important; color: #10b981 !important; box-shadow: 0 0 50px rgba(16, 185, 129, 0.3) !important; }
         .flash-short { border-color: #ef4444 !important; color: #ef4444 !important; box-shadow: 0 0 50px rgba(239, 68, 68, 0.3) !important; }
-        
+        .flash-reverse { border-color: #a855f7 !important; color: #a855f7 !important; box-shadow: 0 0 50px rgba(168, 85, 247, 0.4) !important; }
+        .flash-dca { border-color: #3b82f6 !important; color: #3b82f6 !important; box-shadow: 0 0 50px rgba(59, 130, 246, 0.4) !important; }
+
         #startup-modal { 
             position: fixed; inset: 0; background: #09090b; z-index: 9999; display: flex; align-items: center; justify-content: center; 
         }
@@ -63,6 +67,13 @@
         .mode-btn.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-label { display: block; color: #a1a1aa; margin-bottom: 6px; font-size: 11px; font-weight: 600; }
+        
+        /* DCA Bar Styles */
+        .dca-bar-bg { background: #374151; height: 6px; width: 100%; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+        .dca-fill { height: 100%; transition: width 0.3s ease; }
+        .dca-pulse { animation: dcaGlow 1.5s infinite; }
+        @keyframes dcaGlow { 0% { opacity: 0.6; } 50% { opacity: 1; box-shadow: 0 0 10px #3b82f6; } 100% { opacity: 0.6; } }
+
     </style>
 </head>
 <body>
@@ -72,17 +83,17 @@
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-blue-500"></div>
             <div class="text-center mb-6">
                 <div class="text-5xl mb-3">🧠</div>
-                <h2 class="text-xl font-bold text-white tracking-wide">SMART INITIALIZATION</h2>
-                <p class="text-gray-500 text-xs mt-1">Adaptive Market Analysis Engine</p>
+                <h2 class="text-xl font-bold text-white tracking-wide">STRATEGY ENGINE PRO</h2>
+                <p class="text-gray-500 text-xs mt-1">DCA + Smart Reversal Analysis</p>
             </div>
             <div class="flex gap-4 mb-6">
-                <button id="btn-sim" class="mode-btn active" onclick="setMode('sim')"><i class="fa-solid fa-robot mb-1 block text-lg"></i> AI-Adaptive Bot</button>
+                <button id="btn-sim" class="mode-btn active" onclick="setMode('sim')"><i class="fa-solid fa-robot mb-1 block text-lg"></i> AI-Analyst Bot</button>
             </div>
             <div id="inputs-sim" class="space-y-4">
                 <div class="form-group"><label class="form-label">PAPER CAPITAL ($)</label><input type="number" id="input-capital" class="input-dark w-full" value="10000" placeholder="e.g. 1000"></div>
-                <div class="p-3 bg-purple-900/20 border border-purple-900/50 rounded text-purple-400 text-[10px] flex gap-2 items-start"><i class="fa-solid fa-brain mt-0.5"></i><div><b>Logic Upgrade:</b> Bot will now adapt entry strictness based on loss streaks and Bitcoin's global trend direction.</div></div>
+                <div class="p-3 bg-purple-900/20 border border-purple-900/50 rounded text-purple-400 text-[10px] flex gap-2 items-start"><i class="fa-solid fa-microchip mt-0.5"></i><div><b>Pro Logic:</b> Bot uses <b>1x Leverage (Spot Mode)</b>. It divides equity into 40 slots but stops at 20 to reserve DCA capital.</div></div>
             </div>
-            <button onclick="initializeBot()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-lg transition shadow-lg shadow-purple-900/20 mt-6 flex items-center justify-center gap-2"><i class="fa-solid fa-power-off"></i> ACTIVATE SMART ENGINE</button>
+            <button onclick="initializeBot()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-lg transition shadow-lg shadow-purple-900/20 mt-6 flex items-center justify-center gap-2"><i class="fa-solid fa-power-off"></i> ACTIVATE PRO ENGINE</button>
         </div>
     </div>
 
@@ -95,62 +106,65 @@
     </div>
     
     <nav class="h-12 bg-[#121214] border-b border-[#27272a] flex items-center justify-between px-6 shrink-0">
-        <div class="flex items-center gap-3"><span class="text-xl">🐋</span><span class="font-bold text-white tracking-wide hidden md:block">WHALES PRO <span class="bg-purple-500/20 text-purple-400 text-[10px] px-1.5 py-0.5 rounded ml-1 border border-purple-500/30">ADAPTIVE AI</span></span><span class="font-bold text-white tracking-wide md:hidden">WP <span class="text-orange-400 text-[10px]">AI</span></span></div>
+        <div class="flex items-center gap-3"><span class="text-xl">🐋</span><span class="font-bold text-white tracking-wide hidden md:block">WHALES PRO <span class="bg-blue-500/20 text-blue-400 text-[10px] px-1.5 py-0.5 rounded ml-1 border border-blue-500/30">LOGIC v2</span></span><span class="font-bold text-white tracking-wide md:hidden">WP <span class="text-orange-400 text-[10px]">AI</span></span></div>
         <div class="flex items-center gap-4 px-3 py-1 bg-[#09090b] rounded-lg border border-[#27272a] mx-2"><div class="flex items-center gap-2"><img src="https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/btc.png" onerror="this.onerror=null;this.src='https://placehold.co/16x16/09090b/e4e4e7?text=B'" class="w-4 h-4"><span class="text-gray-400 text-xs font-bold hidden sm:inline">BTC</span><span id="nav-btc" class="text-white font-mono text-xs">---</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2"><img src="https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/32/eth.png" onerror="this.onerror=null;this.src='https://placehold.co/16x16/09090b/e4e4e7?text=E'" class="w-4 h-4"><span class="text-gray-400 text-xs font-bold hidden sm:inline">ETH</span><span id="nav-eth" class="text-white font-mono text-xs">---</span></div></div>
-        <div class="hidden md:flex items-center gap-4 px-4 py-1 bg-[#09090b] rounded-lg border border-[#27272a] text-[10px] font-mono flex-1 mx-4"><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-orange-400 font-bold">FEEDS</span><span id="global-btcd" class="text-white">0/50</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-blue-400 font-bold">MODE</span><span id="global-mode" class="text-white font-bold">STANDBY</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 flex-1 min-w-0"><span class="text-purple-400 font-bold whitespace-nowrap">LOG</span><span id="global-news" class="text-gray-400 truncate w-full animate-news">Initializing...</span></div></div>
+        <div class="hidden md:flex items-center gap-4 px-4 py-1 bg-[#09090b] rounded-lg border border-[#27272a] text-[10px] font-mono flex-1 mx-4"><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-orange-400 font-bold">FEEDS</span><span id="global-btcd" class="text-white">0/50</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 whitespace-nowrap"><span class="text-blue-400 font-bold">STRATEGY</span><span id="global-mode" class="text-white font-bold">STANDBY</span></div><div class="w-px h-3 bg-[#27272a]"></div><div class="flex items-center gap-2 flex-1 min-w-0"><span class="text-purple-400 font-bold whitespace-nowrap">LOG</span><span id="global-news" class="text-gray-400 truncate w-full animate-news">Initializing...</span></div></div>
         <div class="flex flex-col items-end text-[10px] text-gray-500 font-mono"><div class="flex items-center gap-4"><span id="ping-dot" class="w-1.5 h-1.5 rounded-full bg-gray-500"></span> <span>LATENCY: <span class="text-green-400" id="ping-val">--ms</span></span></div><div id="live-clock" class="text-gray-400 mt-0.5 tracking-wide">--/--/---- --:--:--</div></div>
     </nav>
 
     <div id="desk-grid">
         <div class="area-stats stats-flex">
-            <div class="panel p-4 justify-between bg-gradient-to-br from-[#121214] to-[#0a0a0c]"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total Equity (Paper)</span><div id="equity-display" class="text-xl font-bold text-white mono tracking-tight truncate">---</div><div class="text-xs text-gray-400 truncate">Available: <span id="available-balance" class="text-white">---</span></div></div>
+            <div class="panel p-4 justify-between bg-gradient-to-br from-[#121214] to-[#0a0a0c]"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total Equity</span><div id="equity-display" class="text-xl font-bold text-white mono tracking-tight truncate">---</div><div class="text-xs text-gray-400 truncate">Available: <span id="available-balance" class="text-white">---</span></div></div>
             <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Unrealized PnL</span><div id="pnl-display" class="text-xl font-bold text-gray-500 mono truncate">$0.00</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Floating</div></div>
             <div class="panel p-4 justify-between bg-[#18181b]"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Net Realized PnL</span><div id="net-profit-val" class="text-xl font-bold text-white mono truncate">$0.00</div><div class="flex justify-between items-center"><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Win / Loss</div><div id="net-profit-wl" class="text-[10px] text-gray-400 font-mono font-bold">0 / 0</div></div></div>
-            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Strictness Level</span><div id="adaptation-display" class="text-xl font-bold text-purple-400 mono truncate">NORMAL</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Adaptive State</div></div>
-            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Gross Profit</span><div id="realized-profit-val" class="text-xl font-bold text-green-400 mono truncate">$0.00</div><div class="text-[10px] text-gray-500 truncate">Streak: <span id="streak-val" class="text-white font-bold">0</span></div></div>
-            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Consecutive Loss</span><div id="loss-streak-val" class="text-xl font-bold text-red-400 mono truncate">0</div><div class="text-[10px] text-gray-500 truncate">Threshold Impact</div></div>
+            
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total Fees</span><div id="total-fees-val" class="text-xl font-bold text-orange-400 mono truncate">$0.00</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Paid</div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Gross Profit</span><div id="gross-profit-val" class="text-xl font-bold text-green-400 mono truncate">$0.00</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Winners</div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Gross Loss</span><div id="gross-loss-val" class="text-xl font-bold text-red-400 mono truncate">$0.00</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Losers</div></div>
+            
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Active DCAs</span><div id="dca-active-val" class="text-xl font-bold text-blue-400 mono truncate">0</div><div class="text-[10px] text-gray-500 truncate">Scaling In</div></div>
+            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Reversals</span><div id="reversal-count-val" class="text-xl font-bold text-orange-400 mono truncate">0</div><div class="text-[10px] text-gray-500 truncate">Trend Shifts</div></div>
             <div class="panel p-4 justify-between"><div class="flex justify-between items-start mb-1"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Win Rate</span><div class="flex gap-3"><div class="flex flex-col items-center"><span class="text-[9px] text-gray-600 font-bold">W</span><span class="text-green-400 font-bold" id="wins">0</span></div><div class="flex flex-col items-center"><span class="text-[9px] text-gray-600 font-bold">L</span><span class="text-red-400 font-bold" id="losses">0</span></div></div></div><div class="flex items-center"><div class="flex flex-col"><span class="text-[9px] text-gray-600">Win Rate</span><div id="win-rate" class="text-xl font-bold text-white mono">0%</div></div></div></div>
-            <div class="panel p-4 justify-between"><span class="text-[10px] text-gray-500 font-bold uppercase truncate">Total ROI</span><div id="total-roi-box" class="text-xl font-bold text-gray-400 mono truncate">0.00%</div><div class="text-[10px] text-gray-600 uppercase font-bold truncate">Return on Equity</div></div>
             <div class="panel p-2 relative min-w-[100px]"><canvas id="miniEquityChart"></canvas></div>
         </div>
 
         <div class="area-main flex flex-col gap-4">
             <div class="panel flex-none">
                 <div class="panel-header border-l-2 border-purple-500">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-layer-group text-purple-500"></i><span>Adaptive Positions</span><span id="pos-count" class="bg-[#27272a] text-white px-1.5 rounded text-[9px]">0</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-layer-group text-purple-500"></i><span>Smart Positions</span><span id="pos-count" class="bg-[#27272a] text-white px-1.5 rounded text-[10px]">0 / 20</span></div>
                     <button onclick="closeAllPositions()" class="bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-900 px-3 py-1 rounded text-[9px] font-bold transition">PANIC CLOSE</button>
                 </div>
                 <div class="overflow-auto bg-[#09090b] min-h-[150px] max-h-[300px]">
                     <table class="w-full">
                         <thead>
                             <tr>
-                                <th class="pl-6">Symbol</th><th>Side</th><th class="text-right">Entry</th><th class="text-right">Current Price</th>
-                                <th class="text-right text-purple-400 font-bold">Smart Stop</th>
-                                <th class="text-right text-orange-400">Invested (10x)</th>
-                                <th class="text-right">PnL (ROE)</th><th class="text-center pr-4">Status</th>
+                                <th class="pl-6">Symbol</th><th>Side</th><th class="text-right">Avg Entry</th><th class="text-right">Price</th>
+                                <th class="text-right text-blue-400 font-bold">DCA Lvl</th>
+                                <th class="text-right text-orange-400">Lev/Size</th>
+                                <th class="text-right">PnL (ROE)</th><th class="text-center pr-4">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="positions-body"><tr><td colspan="8" class="text-center py-12 text-gray-600 italic">Smart Engine scanning... Waiting for high-confidence setup.</td></tr></tbody>
+                        <tbody id="positions-body"><tr><td colspan="8" class="text-center py-12 text-gray-600 italic">Smart Engine scanning market structure...</td></tr></tbody>
                     </table>
                 </div>
             </div>
             <div class="panel flex-none min-h-[200px]">
                 <div class="panel-header border-l-2 border-gray-600">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i><span>Smart Trade History</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i><span>Analysis & Trade History</span></div>
                     <button onclick="exportCSV()" class="text-[9px] hover:text-white transition">EXPORT CSV</button>
                 </div>
                 <div class="overflow-auto bg-[#09090b] max-h-[200px]">
-                    <table class="w-full"><thead><tr><th class="pl-6">Time</th><th>Symbol</th><th>Side</th><th>Action</th><th class="text-right">Duration</th><th class="text-right">Size</th><th class="text-right">Entry</th><th class="text-right">Exit</th><th class="text-right">Fees</th><th class="text-right pr-6">Net PnL</th></tr></thead><tbody id="history-body"><tr class="text-center"><td colspan="10" class="py-4 text-gray-600 italic">No history available.</td></tr></tbody></table>
+                    <table class="w-full"><thead><tr><th class="pl-6">Time</th><th>Sym</th><th>Side</th><th>Type</th><th>Logic</th><th>Dur</th><th class="text-right">Size</th><th class="text-right">Entry</th><th class="text-right">Exit</th><th class="text-right text-gray-500">Gross</th><th class="text-right text-orange-400">Fee</th><th class="text-right">Net PnL</th><th class="text-right pr-6">% PnL</th></tr></thead><tbody id="history-body"><tr class="text-center"><td colspan="13" class="py-4 text-gray-600 italic">No history available.</td></tr></tbody></table>
                 </div>
             </div>
              <div class="panel flex-1 min-h-[350px]">
                 <div class="panel-header border-l-2 border-cyan-500">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-code-branch text-cyan-500"></i><span>Adaptive Market Scanner</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-code-branch text-cyan-500"></i><span>Deep Scanner</span></div>
                     <div class="text-[9px] text-gray-500 font-mono" id="scan-progress">Scanning: <span class="text-white">ACTIVE</span></div>
                 </div>
                 <div id="logic-table-container" class="flex-1 overflow-y-auto bg-[#09090b] p-2">
                     <table class="w-full text-left border-collapse">
-                        <thead class="text-[9px] text-gray-500 border-b border-[#27272a] bg-[#121214] sticky top-0"><tr><th class="py-2 pl-4">Coin</th><th>Adaptive Action</th><th class="pr-4 text-right">RSI Value</th></tr></thead>
+                        <thead class="text-[9px] text-gray-500 border-b border-[#27272a] bg-[#121214] sticky top-0"><tr><th class="py-2 pl-4">Coin</th><th>Rec. Leverage</th><th>Structure</th><th class="pr-4 text-right">RSI</th></tr></thead>
                         <tbody id="deep-logic-body" class="text-[10px] font-mono">
                             </tbody>
                     </table>
@@ -159,28 +173,23 @@
             
             <div class="panel flex-1 min-h-[200px]">
                 <div class="panel-header border-l-2 border-blue-500">
-                    <div class="flex items-center gap-2"><i class="fa-solid fa-microchip text-blue-500"></i><span>Logic State Analysis</span></div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-microchip text-blue-500"></i><span>AI Logic State</span></div>
                 </div>
                 <div class="flex flex-col md:flex-row h-full">
                     <div class="flex-1 p-4 border-r border-[#27272a] space-y-4">
-                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2">Adaptive Parameters</div>
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2">Market Regime</div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Global BTC Trend</div><div id="btc-trend-display" class="text-lg font-mono text-white">NEUTRAL</div></div>
-                            <div class="bg-[09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Buy Threshold</div><div id="buy-thresh-display" class="text-lg font-mono text-green-400">RSI < 30</div></div>
-                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Sell Threshold</div><div id="sell-thresh-display" class="text-lg font-mono text-red-400">RSI > 70</div></div>
-                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Consecutive Loss</div><div id="cl-display" class="text-lg font-mono text-blue-400">0</div></div>
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Global Trend</div><div id="btc-trend-display" class="text-lg font-mono text-white">NEUTRAL</div></div>
+                            <div class="bg-[09090b] p-3 rounded"><div class="text-[9px] text-gray-500">DCA Strategy</div><div id="dca-strat-display" class="text-lg font-mono text-blue-400">Variance</div></div>
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Stop Loss</div><div id="sl-display" class="text-lg font-mono text-gray-400">DISABLED</div></div>
+                            <div class="bg-[#09090b] p-3 rounded"><div class="text-[9px] text-gray-500">Reversal</div><div id="cl-display" class="text-lg font-mono text-orange-400">Smart</div></div>
                         </div>
                     </div>
                     <div class="flex-[2] flex flex-col p-4">
-                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex justify-between"><span>Bot Decisions</span><span class="text-purple-400 text-[9px]"><i class="fa-solid fa-rotate mr-1"></i> Live</span></div>
-                        <div class="grid grid-cols-3 gap-2 mb-2 text-[9px] font-mono bg-[#18181b] p-2 rounded border border-[#27272a]">
-                            <div>Stop: <span id="ai-trend" class="text-red-400">2.0% Hard</span></div>
-                            <div>Trailing: <span id="ai-vol" class="text-blue-400">Smart 0.2%</span></div>
-                            <div>Logic: <span id="ai-rsi" class="text-green-400">Self-Correcting</span></div>
-                        </div>
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2 flex justify-between"><span>Decision Logs</span><span class="text-purple-400 text-[9px]"><i class="fa-solid fa-rotate mr-1"></i> Live</span></div>
                         <div class="flex-1 overflow-y-auto bg-[#09090b] rounded p-2 border border-[#27272a]">
                             <table class="w-full text-left">
-                                <thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Reason</th><th>Adjustment</th></tr></thead>
+                                <thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Analysis</th><th>Decision</th></tr></thead>
                                 <tbody id="learning-body" class="text-[10px] font-mono"><tr><td colspan="3" class="text-center py-4 text-gray-600 italic">No adaptive events yet.</td></tr></tbody>
                             </table>
                         </div>
@@ -195,11 +204,11 @@
                 </div>
                 <div class="p-4 space-y-3">
                     <div class="flex justify-between items-center text-xs"><span class="text-gray-400">System State</span><span id="engine-mode-disp" class="text-white font-bold">---</span></div>
-                    <div class="flex justify-between items-center text-xs"><span class="text-gray-400">Target Logic</span><span class="text-green-400 font-bold">Trend-Aware RSI</span></div>
+                    <div class="flex justify-between items-center text-xs"><span class="text-gray-400">Logic</span><span class="text-green-400 font-bold">DCA + Reversal</span></div>
                     <div class="mt-2 pt-2 border-t border-[#27272a] overflow-y-auto max-h-[200px]">
                         <div class="flex justify-between items-center text-xs mb-1"><span class="text-gray-400">Started</span><span id="start-time-display" class="text-white font-mono text-[10px]">--:--:--</span></div>
                         <div class="flex justify-between items-center text-xs mb-2"><span class="text-gray-400">Running</span><span id="runtime-display" class="text-blue-400 font-mono font-bold">00:00:00</span></div>
-                        <div id="logic-status" class="text-[10px] text-gray-400 font-mono leading-tight">> Logic: <span class="text-green-500">SMART</span><br>> Observing BTC Correlation...</div>
+                        <div id="logic-status" class="text-[10px] text-gray-400 font-mono leading-tight">> Logic: <span class="text-green-500">1x SPOT MODE</span><br>> Positions: <span class="text-orange-500">Max 20</span> (Capital Reserve for DCA)</div>
                     </div>
                 </div>
             </div>
@@ -219,7 +228,7 @@
                 </div>
             </div>
             <div class="panel flex-1 min-h-[200px]"><div class="panel-header"><span>Strategy Logs</span></div><div id="sys-log" class="overflow-y-auto flex-1 p-2 font-mono text-[9px] space-y-1 text-gray-500 bg-[#09090b]"></div></div>
-            <div class="panel h-auto shrink-0 min-h-[250px]"><div class="panel-header border-l-2 border-blue-500"><div class="flex items-center gap-2"><i class="fa-solid fa-water text-blue-500"></i><span>Binance Large Orders</span></div><span class="text-[9px] text-gray-500 animate-pulse">Live (> $100k)</span></div><div class="flex-1 overflow-y-auto bg-[#09090b] p-2"><table class="w-full text-left"><thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Coin</th><th>Type</th><th class="text-right pr-2">Value</th></tr></thead><tbody id="whale-tracker-body" class="text-[10px] font-mono"></tbody></table></div></div>
+            <div class="panel h-auto shrink-0 min-h-[250px]"><div class="panel-header border-l-2 border-blue-500"><div class="flex items-center gap-2"><i class="fa-solid fa-water text-blue-500"></i><span>Large Orders</span></div><span class="text-[9px] text-gray-500 animate-pulse">Live (> $100k)</span></div><div class="flex-1 overflow-y-auto bg-[#09090b] p-2"><table class="w-full text-left"><thead class="text-[9px] text-gray-500 border-b border-[#27272a]"><tr><th class="pb-2 pl-2">Time</th><th>Coin</th><th>Type</th><th class="text-right pr-2">Value</th></tr></thead><tbody id="whale-tracker-body" class="text-[10px] font-mono"></tbody></table></div></div>
         </div>
         
         <div class="area-bottom grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -288,7 +297,7 @@
 
     function log(msg, type='gray') { 
         const d = document.createElement('div'); 
-        d.className = `border-l-2 pl-2 ${type==='green'?'border-green-500 text-green-400':type==='red'?'border-red-500 text-red-400':type==='purple'?'border-purple-500 text-purple-400':type==='blue'?'border-blue-500 text-blue-400':'border-gray-700 text-gray-400'}`; 
+        d.className = `border-l-2 pl-2 ${type==='green'?'border-green-500 text-green-400':type==='red'?'border-red-500 text-red-400':type==='purple'?'border-purple-500 text-purple-400':type==='blue'?'border-blue-500 text-blue-400':type==='orange'?'border-orange-500 text-orange-400':'border-gray-700 text-gray-400'}`; 
         d.innerHTML = `<span class="text-gray-600 font-bold">[${new Date().toLocaleTimeString().split(' ')[0]}]</span> ${msg}`; 
         const logContainer = document.getElementById('sys-log'); 
         if (logContainer) { 
@@ -306,13 +315,13 @@
         el.innerHTML = `${fmt.price(p)} <span class="${color} text-[10px]">(${c.toFixed(2)}%)</span>`; 
     }
 
-    function logAdaptiveEvent(reason, adjustment) {
+    function logAdaptiveEvent(analysis, decision) {
         const tbody = document.getElementById('learning-body');
         const row = `
             <tr class="border-b border-[#27272a] bg-[#18181b] animate-pulse">
                 <td class="pl-2 py-2 text-gray-500">${new Date().toLocaleTimeString()}</td>
-                <td class="text-white font-bold">${reason}</td>
-                <td class="text-purple-400 font-bold">${adjustment}</td>
+                <td class="text-white font-bold text-[9px]">${analysis}</td>
+                <td class="text-purple-400 font-bold text-[9px]">${decision}</td>
             </tr>
         `;
         tbody.insertAdjacentHTML('afterbegin', row);
@@ -324,92 +333,13 @@
     let VALID_FUTURES_SYMBOLS = new Set(); 
     let whaleBuffer = []; 
     
-// --- BINANCE FUTURES USDT PAIRS (DECEMBER 2025) ---
-const CURATED_SAFE_LIST = [
-    // Top Volume & Major Coins
-    'btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'xrpusdt', 'adausdt', 'dogeusdt',
-    'avaxusdt', 'dotusdt', 'linkusdt', 'maticusdt', 'ltcusdt', 'uniusdt',
-    'shibusdt', 'pepeusdt', 'flokiusdt', 'bonkusdt', 'luncusdt',
-    'ftmusdt', 'sandusdt', 'galausdt', 'nearusdt', 'filusdt', 'atomusdt', 'arbusdt',
-    'aptusdt', 'opusdt', 'sushiusdt', 'crvusdt', 'aaveusdt', 'axsusdt',
-    'grtusdt', 'algousdt', 'vetusdt', 'egldusdt', 'xtzusdt', 'thetausdt',
-    'eosusdt', 'icpusdt', 'xlmusdt', 'hbarusdt', 'etcusdt', 'trxusdt',
-    'wavesusdt', 'zilusdt', 'stxusdt', 'ensusdt', 'cakeusdt', 'xecusdt',
-    'mkrkusdt', 'snxusdt', 'compusdt', 'yfiiusdt', 'batusdt', 'zrxusdt',
-    'omgusdt', 'sklusdt', 'sxpusdt', 'scusdt', 'storjusdt', 'kmdusdt',
-    'rsrusdt', 'antusdt', 'chzusdt', 'cocosusdt', 'bntusdt', 'hotusdt',
-    // AI & Big Data
-    'agixusdt', 'fetusdt', 'aktusdt', 'rndrusdt', 'nmrusdt', 'oceanusdt',
-    'ctxcusdt', 'phbusdt', 'vaiusdt', 'glmusdt',
-    // Gaming/Metaverse
-    'imxusdt', 'galusdt', 'enjusdt', 'manausdt', 'sensusdt', 'slpusdt',
-    'tlosusdt', 'roninusdt', 'pixelusdt', 'blurusdt', 'darusdt', 'yggusdt',
-    'ilvusdt', 'ghstusdt', 'aliceusdt', 'superusdt', 'cvxusdt',
-    // DeFi
-    'uniwusdt', 'aavewusdt', 'compwusdt', 'snxwusdt', 'crvwusdt', 'yfiwusdt',
-    'mkrusdt', 'lptusdt', '1inchusdt', 'kncusdt', 'badgerusdt', 'balusdt',
-    'renusdt', 'umaausdt', 'frontusdt', 'hegusdt', 'lrcusdt', 'cvusdt',
-    'polyxusdt', 'injiusdt', 'ldousdt', 'cakewasdt', 'qtumusdt', 'zecusdt',
-    // Layer 1 & Layer 2
-    'maticwasdt', 'arbwasdt', 'opwasdt', 'metisusdt', 'celousdt', 'onewusdt',
-    'fttwusdt', 'roseusdt', 'iotausdt', 'ksmusdt', 'flowusdt', 'minausdt',
-    'cfxusdt', 'ankrusdt', 'jasmyusdt', 'ckbusdt', 'waxpusdt', 'ognusdt',
-    'cotiusdt', 'duskusdt', 'stptusdt', 'sandwasdt',
-    // Oracles & Infrastructure
-    'linkwasdt', 'bandusdt', 'trbusdt', 'nestusdt', 'diausdt', 'umaausdt',
-    'api3usdt', 'pyrusdt', 'trusdt', 'atorusdt', 'pendleusdt', 'mavusdt',
-    // Meme Coins
-    'wifusdt', 'bomeusdt', 'turtusdt', 'peopleusdt', 'gmeusdt', 'amcusdt',
-    'tslausdt', 'donaldtrumusdt', 'jeobidenusdt', 'babydogeusdt',
-    // NFT & Social
-    'chzusdt', 'maskusdt', 'litusdt', 'audiousdt', 'rareusdt', 'tvkusdt',
-    'keyusdt', 'straxusdt', 'dodoasdt', 'grtwasdt', 'perpusdt',
-    // Privacy & Security
-    'scrtusdt', 'oxtusdt', 'keepusdt', 'mboxusdt', 'burgerusdt',
-    // Exchange Tokens
-    'bgbusdt', 'kcsusdt', 'htusdt', 'okbusdt', 'gtusdt', 'mxusdt',
-    'bnxusdt', 'bitusdt', 'cetusdt', 'woousdt', 'mdtusdt',
-    // Stablecoins & Yield
-    'fdusdusdt', 'tusdusdt', 'usdcusdt', 'daiusdt', 'busdusdt', 'eursusdt',
-    'paxgusdt', 'usdpusdt', 'gusdusdt', 'husdusdt',
-    // AI & Machine Learning
-    'nmrusdt', 'paiusdt', 'sophusdt', 'deepusdt', 'neurusdt', 'vaiusdt',
-    // Additional pairs from the full list
-    '1000shibusdt', '1000pepeusdt', '1000flokiusdt', '1000bonkusdt', '1000luncusdt',
-    '1000xecusdt', '1000bttusdt', '1000satsusdt', '1000ratsusdt',
-    'zilusdt', 'kncusdt', 'zrxusdt', 'compusdt', 'omgusdt', 'sklusdt',
-    'sxpusdt', 'scusdt', 'storjusdt', 'kmdusdt', 'rsrusdt', 'antusdt',
-    'chzusdt', 'cocosusdt', 'bntusdt', 'hotusdt', 'agixusdt', 'fetusdt',
-    'aktusdt', 'rndrusdt', 'nmrusdt', 'oceanusdt', 'ctxcusdt', 'phbusdt',
-    'vaiusdt', 'glmusdt', 'imxusdt', 'galusdt', 'enjusdt', 'manausdt',
-    'sensusdt', 'slpusdt', 'tlosusdt', 'roninusdt', 'pixelusdt', 'blurusdt',
-    'darusdt', 'yggusdt', 'ilvusdt', 'ghstusdt', 'aliceusdt', 'superusdt',
-    'cvxusdt', 'uniwusdt', 'aavewusdt', 'compwusdt', 'snxwusdt', 'crvwusdt',
-    'yfiwusdt', 'mkrusdt', 'lptusdt', '1inchusdt', 'kncusdt', 'badgerusdt',
-    'balusdt', 'renusdt', 'umaausdt', 'frontusdt', 'hegusdt', 'lrcusdt',
-    'cvusdt', 'polyxusdt', 'injiusdt', 'ldousdt', 'cakewasdt', 'qtumusdt',
-    'zecusdt', 'maticwasdt', 'arbwasdt', 'opwasdt', 'metisusdt', 'celousdt',
-    'onewusdt', 'fttwusdt', 'roseusdt', 'iotausdt', 'ksmusdt', 'flowusdt',
-    'minausdt', 'cfxusdt', 'ankrusdt', 'jasmyusdt', 'ckbusdt', 'waxpusdt',
-    'ognusdt', 'cotiusdt', 'duskusdt', 'stptusdt', 'sandwasdt', 'linkwasdt',
-    'bandusdt', 'trbusdt', 'nestusdt', 'diausdt', 'umaausdt', 'api3usdt',
-    'pyrusdt', 'trusdt', 'atorusdt', 'pendleusdt', 'mavusdt', 'wifusdt',
-    'bomeusdt', 'turtusdt', 'peopleusdt', 'gmeusdt', 'amcusdt', 'tslausdt',
-    'donaldtrumusdt', 'jeobidenusdt', 'babydogeusdt', 'chzusdt', 'maskusdt',
-    'litusdt', 'audiousdt', 'rareusdt', 'tvkusdt', 'keyusdt', 'straxusdt',
-    'dodoasdt', 'grtwasdt', 'perpusdt', 'scrtusdt', 'oxtusdt', 'keepusdt',
-    'mboxusdt', 'burgerusdt', 'bgbusdt', 'kcsusdt', 'htusdt', 'okbusdt',
-    'gtusdt', 'mxusdt', 'bnxusdt', 'bitusdt', 'cetusdt', 'woousdt', 'mdtusdt',
-    'fdusdusdt', 'tusdusdt', 'usdcusdt', 'daiusdt', 'busdusdt', 'eursusdt',
-    'paxgusdt', 'usdpusdt', 'gusdusdt', 'husdusdt', 'nmrusdt', 'paiusdt',
-    'sophusdt', 'deepusdt', 'neurusdt', 'vaiusdt'
-];
     // EXPLICIT BLACKLIST
     const BLACKLIST = ['xmrusdt', 'antusdt', 'btcdomusdt', 'defiusdt', 'bluebirdusdt'];
+    const CURATED_SAFE_LIST = ['btcusdt', 'ethusdt', 'solusdt', 'bnbusdt', 'xrpusdt', 'adausdt', 'dogeusdt', 'avaxusdt', 'linkusdt', 'maticusdt'];
 
-    const MAX_POSITIONS = 10;
-    const LEVERAGE = 5;
-    const FEE_RATE = 0.0005; 
+    const MAX_POSITIONS = 40; 
+    const ACTIVE_TRADE_LIMIT = 20; // Stop taking new positions after 20 to reserve DCA capital
+    const FEE_RATE = 0.0005; // 0.05% per side -> 0.1% Round Trip
     let activeStreamCount = 0;
     
     const app = { 
@@ -424,10 +354,9 @@ const CURATED_SAFE_LIST = [
             tradeHistory: [],
             wins: 0,
             losses: 0,
-            consecutiveLosses: 0, // NEW: Tracks streaks for adaptation
+            reversals: 0,
+            activeDCAs: 0,
             feesPaid: 0,
-            grossProfit: 0, 
-            grossLoss: 0, 
             cooldowns: {} 
         }
     };
@@ -458,6 +387,11 @@ const CURATED_SAFE_LIST = [
         return 100 - (100 / (1 + rs));
     }
 
+    // --- DYNAMIC LEVERAGE & VOLATILITY ---
+    function getDynamicLeverage(symbol, history) {
+        return 1; // Strict 1x Leverage per user request
+    }
+
     // --- INITIALIZATION ---
     function setMode(mode) {
         document.getElementById('btn-sim').className = `mode-btn active`;
@@ -474,18 +408,17 @@ const CURATED_SAFE_LIST = [
         safeSetText('start-time-display', `${app.bot.startTime.toLocaleDateString()} ${app.bot.startTime.toLocaleTimeString()}`);
         safeSetText('equity-display', fmt.usd(app.bot.balance));
         safeSetText('available-balance', fmt.usd(app.bot.balance));
-        safeSetText('global-mode', 'ADAPTIVE');
-        safeSetText('engine-mode-disp', 'AI-SMART');
+        safeSetText('global-mode', 'DCA-AI');
+        safeSetText('engine-mode-disp', 'PRO-LOGIC');
         document.getElementById('global-mode').className = `text-purple-400 font-bold`;
 
-        log(`SMART ENGINE ONLINE. Initializing Market Scan...`, 'purple');
+        log(`PRO ENGINE ONLINE. Initializing Market Structure Analysis...`, 'purple');
         
         await fetchTopCoins();
         initCharts();
         startWebSocket();
     }
 
-    // --- UPDATED: FETCH TOP COINS DYNAMICALLY & STRICTLY ---
     async function fetchTopCoins() {
         try {
             log("Verifying Binance Futures Exchange Info...", "blue");
@@ -535,12 +468,17 @@ const CURATED_SAFE_LIST = [
 
     // --- WEBSOCKET ENGINE ---
     function startWebSocket() {
+        // UI Feedback: Connecting
+        safeSetText('global-news', "Connecting to Feed...");
+        const pingDot = document.getElementById('ping-dot');
+        if(pingDot) pingDot.className = "w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse";
+
         const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=!ticker@arr`);
 
         ws.onopen = () => {
-            log("WebSocket Connected. Sending Subscriptions...", "green");
-            safeSetText('global-news', "Socket Open");
-            document.getElementById('ping-dot').className = "w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse";
+            log("WebSocket Connected. Stream Active.", "green");
+            safeSetText('global-news', "Socket Open - Live Data");
+            if(pingDot) pingDot.className = "w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse";
             
             const streams = [];
             WATCHLIST.forEach(s => { streams.push(`${s}@aggTrade`); streams.push(`${s}@kline_1m`); });
@@ -548,7 +486,6 @@ const CURATED_SAFE_LIST = [
             for (let i = 0; i < streams.length; i += 50) {
                 const chunk = streams.slice(i, i + 50);
                 ws.send(JSON.stringify({ method: "SUBSCRIBE", params: chunk, id: i + 2 }));
-                log(`Subscribed to batch ${i/50 + 1}...`);
             }
         };
 
@@ -607,6 +544,7 @@ const CURATED_SAFE_LIST = [
                 if (app.coins[s]) app.coins[s].price = price;
                 else app.coins[s] = { price: price, change: 0, vol: 0 };
                 
+                // CRITICAL: Check Reversal Logic on every Tick
                 if(app.bot.positions[s]) updatePositionPnL(s, price);
 
                 const val = price * parseFloat(msg.q);
@@ -624,6 +562,18 @@ const CURATED_SAFE_LIST = [
                 }
             }
         };
+
+        ws.onclose = () => {
+            log("WebSocket Connection Lost. Reconnecting in 3s...", "red");
+            safeSetText('global-news', "Reconnecting...");
+            if(pingDot) pingDot.className = "w-1.5 h-1.5 rounded-full bg-red-500";
+            setTimeout(startWebSocket, 3000);
+        };
+
+        ws.onerror = (err) => {
+            console.error("WebSocket Error:", err);
+            ws.close();
+        };
     }
 
     // --- SMART TRADING ENGINE ---
@@ -633,10 +583,10 @@ const CURATED_SAFE_LIST = [
         if (app.bot.positions[symbol]) return; 
 
         const lastClosed = app.bot.cooldowns[symbol] || 0;
-        if (Date.now() - lastClosed < 300000) return; 
+        if (Date.now() - lastClosed < 60000) return; // 1 min cooldown
 
         const activeCount = Object.keys(app.bot.positions).length;
-        if (activeCount >= MAX_POSITIONS) return;
+        if (activeCount >= ACTIVE_TRADE_LIMIT) return; // Stop taking new positions after 20
 
         // --- 1. DETERMINE GLOBAL BTC SENTIMENT ---
         const btcChange = app.coins['btcusdt']?.change || 0;
@@ -644,160 +594,282 @@ const CURATED_SAFE_LIST = [
         if (btcChange < -2.0) btcRegime = 'BEARISH';
         if (btcChange > 2.0) btcRegime = 'BULLISH';
         
-        // --- 2. ADAPTIVE RSI THRESHOLDS (TILT CONTROL) ---
         let buyThresh = 30;
         let sellThresh = 70;
-        let strictness = 'NORMAL';
 
-        // TIGHTEN rules if on a losing streak (Self-Correction)
-        if (app.bot.consecutiveLosses >= 2) {
-            buyThresh = 25;
-            sellThresh = 75;
-            strictness = 'CAUTIOUS';
-        }
-        if (app.bot.consecutiveLosses >= 4) {
-            buyThresh = 20;
-            sellThresh = 80; // Extreme only
-            strictness = 'STRICT';
-        }
+        // Filter: Don't fight extreme trends initially
+        if (btcRegime === 'BEARISH') buyThresh = 20; 
+        if (btcRegime === 'BULLISH') sellThresh = 80;
 
-        // --- 3. APPLY REGIME FILTER ---
-        // If Bearish, hard to buy. If Bullish, hard to sell.
-        if (btcRegime === 'BEARISH') buyThresh -= 5; // e.g., need 25 instead of 30
-        if (btcRegime === 'BULLISH') sellThresh += 5; // e.g., need 75 instead of 70
+        // --- 2. EXECUTION ---
+        // Calc Leverage based on volatility
+        const leverage = 1; // Strict 1x
 
-        // --- 4. EXECUTION ---
-        const margin = app.bot.equity / MAX_POSITIONS;
-        const sizeUSD = margin * LEVERAGE;
+        // Position Sizing: Equal divide by 40
+        const initialMargin = app.bot.equity / MAX_POSITIONS; 
+        
+        const sizeUSD = initialMargin * leverage;
         const coinSize = sizeUSD / price;
 
         if (rsi < buyThresh) {
-            executeTrade(symbol, 'LONG', price, coinSize, strictness);
+            executeTrade(symbol, 'LONG', price, coinSize, initialMargin, leverage, 'OVERSOLD');
         } else if (rsi > sellThresh) {
-            executeTrade(symbol, 'SHORT', price, coinSize, strictness);
+            executeTrade(symbol, 'SHORT', price, coinSize, initialMargin, leverage, 'OVERBOUGHT');
         }
         
-        // UI Updates for Logic
-        safeSetText('adaptation-display', strictness);
-        safeSetText('loss-streak-val', app.bot.consecutiveLosses);
         safeSetText('btc-trend-display', btcRegime);
-        safeSetText('buy-thresh-display', `RSI < ${buyThresh}`);
-        safeSetText('sell-thresh-display', `RSI > ${sellThresh}`);
-        
-        if (btcRegime === 'BEARISH') safeSetText('btc-impact-msg', 'BTC Dumping: Longs Restricted');
-        else if (btcRegime === 'BULLISH') safeSetText('btc-impact-msg', 'BTC Pumping: Shorts Restricted');
-        else safeSetText('btc-impact-msg', 'BTC Neutral: Standard Logic');
     }
 
-    function executeTrade(symbol, side, price, size, strictness) {
+    function executeTrade(symbol, side, price, size, marginUsed, leverage, reason) {
         if (!price || price <= 0 || isNaN(price)) return;
         if (!VALID_FUTURES_SYMBOLS.has(symbol.toUpperCase())) return;
 
+        // Fee Calculation
+        const notional = size * price;
+        const fee = notional * FEE_RATE;
+        app.bot.balance -= fee; 
+        app.bot.feesPaid += fee; // Track Fees
+        
+        // Create Position Object
         app.bot.positions[symbol] = {
             symbol: symbol,
             side: side,
-            entry: price,
-            size: size,
-            sizeUSD: size * price,
+            avgEntry: price,
+            totalSize: size,       // Coin amount
+            totalMargin: marginUsed, // USDT Margin used
+            leverage: leverage,
             pnl: 0,
+            accumulatedFees: fee, // Track accumulated fees (Entry + DCAs)
             startTime: Date.now(),
             highestPrice: price,
             lowestPrice: price,
             trailingActive: false,
-            lastStopPrice: 0
+            lastStopPrice: 0,
+            dcaCount: 0,           // How many DCAs done
+            entries: [{price: price, size: size, time: Date.now()}] // Log of entries
         };
         
-        const fee = (size * price) * FEE_RATE;
-        app.bot.balance -= fee; 
-        
-        log(`⚡ SMART ENTRY (${strictness}): ${side} ${symbol.toUpperCase()} @ ${fmt.price(price)}`, side === 'LONG' ? 'green' : 'red');
-        showFlash(side, symbol.toUpperCase().replace('USDT',''), "POSITION OPENED");
+        log(`⚡ OPEN (${reason}): ${side} ${symbol.toUpperCase()} ${leverage}x | $${notional.toFixed(0)}`, side === 'LONG' ? 'green' : 'red');
+        showFlash(side, symbol.toUpperCase().replace('USDT',''), `LEV ${leverage}x`);
         updateDashboardPositions();
     }
 
+    // --- ANALYTIC ENGINE (DCA vs REVERSAL) ---
     function updatePositionPnL(symbol, currentPrice) {
         const pos = app.bot.positions[symbol];
         if (!pos) return;
-        if (!currentPrice || currentPrice <= 0 || isNaN(currentPrice)) return;
 
-        if (pos.side === 'LONG') pos.pnl = (currentPrice - pos.entry) * pos.size;
-        else pos.pnl = (pos.entry - currentPrice) * pos.size;
+        // 1. Calculate PnL
+        const notional = pos.totalSize * currentPrice;
+        let pnl = 0;
+        if (pos.side === 'LONG') pnl = (currentPrice - pos.avgEntry) * pos.totalSize;
+        else pnl = (pos.avgEntry - currentPrice) * pos.totalSize;
 
-        const roe = (pos.pnl / pos.sizeUSD) * 100;
+        pos.pnl = pnl;
+        const roe = (pnl / pos.totalMargin) * 100;
         
-        // --- STOP LOSS @ 80% ---
-        if (roe <= -80) {
-            closePosition(symbol, currentPrice, "STOP_LOSS");
+        // --- 2. ADVERSE EXCURSION ANALYSIS ---
+        // Calculate price deviation percentage (negative if losing)
+        const priceDevPct = (pos.side === 'LONG') 
+            ? (currentPrice - pos.avgEntry) / pos.avgEntry 
+            : (pos.avgEntry - currentPrice) / pos.avgEntry;
+
+        // TRIGGER ANALYSIS if Deviation < -1.5% (approx) and not in cooldown
+        // We use -0.015 as a trigger point for "Action Required"
+        if (priceDevPct < -0.015) {
+             decideRecoveryStrategy(symbol, pos, currentPrice, priceDevPct);
+        }
+
+        // --- 3. TRAILING TAKE PROFIT LOGIC ---
+        // Only active if profitable
+        if (roe > 0) {
+            const TRAILING_ACTIVATION = 1.5; // Activate at 1.5% profit
+            const TRAILING_DISTANCE = 0.003; // 0.3% price distance
+
+            if (pos.side === 'LONG') {
+                if (currentPrice > pos.highestPrice) pos.highestPrice = currentPrice;
+                if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
+                if (pos.trailingActive) {
+                    const stopPrice = pos.highestPrice * (1 - TRAILING_DISTANCE);
+                    pos.lastStopPrice = stopPrice;
+                    if (currentPrice < stopPrice) closePosition(symbol, currentPrice, "TRAILING_PROFIT");
+                }
+            } else {
+                if (currentPrice < pos.lowestPrice) pos.lowestPrice = currentPrice;
+                if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
+                if (pos.trailingActive) {
+                    const stopPrice = pos.lowestPrice * (1 + TRAILING_DISTANCE);
+                    pos.lastStopPrice = stopPrice;
+                    if (currentPrice > stopPrice) closePosition(symbol, currentPrice, "TRAILING_PROFIT");
+                }
+            }
+        }
+    }
+
+    function decideRecoveryStrategy(symbol, pos, currentPrice, devPct) {
+        // Prevent action spamming
+        if (pos.lastActionTime && Date.now() - pos.lastActionTime < 10000) return;
+
+        // --- ANALYZE MARKET CONTEXT ---
+        const rsi = app.coins[symbol]?.rsi || 50;
+        const btcTrend = app.coins['btcusdt']?.change || 0;
+        
+        // LOGIC A: REVERSAL
+        // If we are LONG, but BTC is dumping hard (< -1.5%) AND RSI is not oversold (room to fall further)
+        // Then the trend has likely shifted against us. Reverse.
+        if (pos.side === 'LONG' && btcTrend < -1.5 && rsi > 35) {
+             performReversal(symbol, pos, currentPrice, "TREND_SHIFT_BEAR");
+             return;
+        }
+        if (pos.side === 'SHORT' && btcTrend > 1.5 && rsi < 65) {
+             performReversal(symbol, pos, currentPrice, "TREND_SHIFT_BULL");
+             return;
+        }
+
+        // LOGIC B: DCA (HOLD & ADD)
+        // If deviation matches our steps (-1.5%, -3.0%, -6.0%)
+        // AND we haven't maxed out DCAs (3 max)
+        // AND Indicators suggest it's just a wick (e.g. RSI extreme or BTC neutral)
+        
+        // Define DCA thresholds with variance
+        const step1 = -0.015; // -1.5%
+        const step2 = -0.030; // -3.0%
+        const step3 = -0.060; // -6.0%
+
+        let shouldDCA = false;
+
+        if (pos.dcaCount === 0 && devPct < step1) shouldDCA = true;
+        else if (pos.dcaCount === 1 && devPct < step2) shouldDCA = true;
+        else if (pos.dcaCount === 2 && devPct < step3) shouldDCA = true;
+
+        if (shouldDCA) {
+            if (pos.dcaCount < 3) {
+                performDCA(symbol, pos, currentPrice);
+            } else {
+                // Max DCA reached. We HOLD.
+                // User said "No stop loss", so we wait for reversal condition or profit.
+                // However, we can update the status to "HOLDING_BAG"
+                if (!pos.holdingBag) {
+                    log(`⚠️ MAX DCA REACHED on ${symbol}. Holding for recovery...`, "orange");
+                    pos.holdingBag = true;
+                }
+            }
+        }
+    }
+
+    function performReversal(symbol, pos, currentPrice, reason) {
+        logAdaptiveEvent(`Structure Break (${reason})`, "REVERSAL TRIGGERED");
+        
+        // 1. Close current
+        closePosition(symbol, currentPrice, "STOP_REVERSE");
+        
+        // 2. Open Opposite immediately
+        delete app.bot.cooldowns[symbol]; // Clear cooldown
+        const newSide = pos.side === 'LONG' ? 'SHORT' : 'LONG';
+        
+        // Recalculate safe size
+        const initialMargin = app.bot.equity / MAX_POSITIONS; 
+        const leverage = 1;
+        const sizeUSD = initialMargin * leverage;
+        const coinSize = sizeUSD / currentPrice;
+
+        executeTrade(symbol, newSide, currentPrice, coinSize, initialMargin, leverage, "AUTO_REVERSAL");
+        app.bot.reversals++;
+        safeSetText('reversal-count-val', app.bot.reversals);
+    }
+
+    function performDCA(symbol, pos, currentPrice) {
+        pos.dcaCount++;
+        pos.lastActionTime = Date.now();
+        
+        // Add same amount of margin as initial entry (Linear Scaling)
+        // Or we could double down (Martingale), but user asked for "lower position size initially" implying scaling.
+        // Let's add 1 unit.
+        // Initial was 0.25 margin unit. We add another 0.25 margin unit.
+        
+        const addMargin = app.bot.equity / MAX_POSITIONS; // Constant add size
+        const addSizeUSD = addMargin * pos.leverage;
+        const addCoinSize = addSizeUSD / currentPrice;
+        
+        // Safety Check: Do we have enough available balance?
+        // We use accumulated Margin to track 'used' funds.
+        const totalUsed = Object.values(app.bot.positions).reduce((acc, p) => acc + p.totalMargin, 0);
+        const available = app.bot.balance - totalUsed;
+        
+        if (available < addMargin) {
+            log(`⚠️ DCA REJECTED on ${symbol}: Insufficient Capital (Reserved Limit Hit)`, "red");
+            // Revert count
+            pos.dcaCount--;
             return;
         }
 
-        // --- TRAILING STOP LOGIC ---
-        const TRAILING_ACTIVATION = 0.5; // Activate when 0.5% profit
-        const TRAILING_DISTANCE = 0.002; // 0.2% price distance
+        // Fee
+        const dcaFee = addSizeUSD * FEE_RATE;
+        app.bot.balance -= dcaFee;
+        app.bot.feesPaid += dcaFee; // Track DCA Fee
+        pos.accumulatedFees += dcaFee; // Track per position
+
+        // Update Position Averages
+        const totalCoinsOld = pos.totalSize;
+        const totalCostOld = pos.avgEntry * pos.totalSize;
+        const addCost = currentPrice * addCoinSize;
         
-        if (pos.side === 'LONG') {
-            if (currentPrice > pos.highestPrice) pos.highestPrice = currentPrice;
-            if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
-            if (pos.trailingActive) {
-                const stopPrice = pos.highestPrice * (1 - TRAILING_DISTANCE);
-                pos.lastStopPrice = stopPrice;
-                if (currentPrice < stopPrice) closePosition(symbol, currentPrice, "TRAILING_STOP");
-            }
-        } else {
-            if (currentPrice < pos.lowestPrice) pos.lowestPrice = currentPrice;
-            if (!pos.trailingActive && roe >= TRAILING_ACTIVATION) pos.trailingActive = true;
-            if (pos.trailingActive) {
-                const stopPrice = pos.lowestPrice * (1 + TRAILING_DISTANCE);
-                pos.lastStopPrice = stopPrice;
-                if (currentPrice > stopPrice) closePosition(symbol, currentPrice, "TRAILING_STOP");
-            }
-        }
+        const newTotalCoins = totalCoinsOld + addCoinSize;
+        const newAvgEntry = (totalCostOld + addCost) / newTotalCoins;
+
+        pos.totalSize = newTotalCoins;
+        pos.avgEntry = newAvgEntry;
+        pos.totalMargin += addMargin;
+        pos.entries.push({price: currentPrice, size: addCoinSize, time: Date.now()});
+
+        log(`🛡️ DCA #${pos.dcaCount} ${symbol}: Added ${fmt.usd(addSizeUSD)} @ ${fmt.price(currentPrice)}. New Avg: ${fmt.price(newAvgEntry)}`, "blue");
+        showFlash("DCA", symbol.toUpperCase().replace('USDT',''), `LEVEL ${pos.dcaCount}`);
+        logAdaptiveEvent("Price Deviation", `DCA BUY ${pos.dcaCount}/3`);
+        
+        updateDashboardPositions();
     }
 
     function closePosition(symbol, price, reason) {
         const pos = app.bot.positions[symbol];
         if (!pos) return;
 
-        const entryFee = (pos.size * pos.entry) * FEE_RATE;
-        const exitFee = (pos.size * price) * FEE_RATE;
-        const totalRoundTripFee = entryFee + exitFee;
+        const notionalExit = pos.totalSize * price;
+        const exitFee = notionalExit * FEE_RATE;
         
-        app.bot.balance += pos.pnl;
-        app.bot.balance -= exitFee;
+        app.bot.balance += pos.pnl; // Add PnL to balance
+        app.bot.balance -= exitFee; // Deduct Exit Fee
+        app.bot.feesPaid += exitFee; // Track Exit Fee
         
-        const netPnl = pos.pnl - totalRoundTripFee;
+        // Net PnL = Gross PnL - (EntryFees + DCA Fees + ExitFees)
+        const totalTradeFees = pos.accumulatedFees + exitFee;
+        const netPnl = pos.pnl - totalTradeFees;
 
-        // --- ADAPTIVE LOGIC: STREAK MANAGEMENT ---
-        if (netPnl > 0) {
-            app.bot.wins++;
-            app.bot.consecutiveLosses = 0; // Reset streak on win
-            if (reason === "TRAILING_STOP") logAdaptiveEvent("Trailing Stop Hit", "Locked Profit & Reset Streak");
-        } else {
-            app.bot.losses++;
-            app.bot.consecutiveLosses++; // Increment streak on loss
-            logAdaptiveEvent("Loss Taken", `Streak now ${app.bot.consecutiveLosses} - Tightening Logic`);
-        }
+        if (netPnl > 0) app.bot.wins++;
+        else app.bot.losses++;
 
         app.bot.cooldowns[symbol] = Date.now();
+        
+        // Calculate duration
+        const duration = Date.now() - pos.startTime;
 
         const record = {
             time: Date.now(),
             symbol: symbol.toUpperCase(),
             side: pos.side,
-            action: reason,
-            size: pos.sizeUSD,
-            entry: pos.entry,
+            type: pos.dcaCount > 0 ? `DCA (${pos.dcaCount})` : 'Std',
+            logic: reason,
+            size: pos.totalSize * price,
+            entry: pos.avgEntry,
             exit: price,
-            fees: totalRoundTripFee, 
-            rawPnl: pos.pnl, 
+            fee: totalTradeFees,
             netPnl: netPnl,
-            duration: fmt.duration(Date.now() - pos.startTime)
+            duration: duration
         };
         app.bot.tradeHistory.unshift(record);
         if(app.bot.tradeHistory.length > 200) app.bot.tradeHistory.pop();
         
         delete app.bot.positions[symbol];
-        log(`💰 CLOSED ${symbol.toUpperCase()}: ${reason} | Net PnL: ${fmt.usd(netPnl)}`, netPnl > 0 ? 'green' : 'red');
+        log(`💰 CLOSED ${symbol.toUpperCase()}: ${reason} | Net: ${fmt.usd(netPnl)}`, netPnl > 0 ? 'green' : 'red');
         
         updateHistoryUI();
         updateDashboardPositions();
@@ -809,13 +881,29 @@ const CURATED_SAFE_LIST = [
         const tbody = document.getElementById('positions-body');
         const positions = Object.values(app.bot.positions);
         
+        // Count active DCAs
+        let totalDcas = 0;
+        let totalMarginUsed = 0; // Track locked margin
+        positions.forEach(p => {
+            totalDcas += p.dcaCount;
+            totalMarginUsed += p.totalMargin;
+        });
+        
+        safeSetText('dca-active-val', totalDcas);
+        
+        // Enhanced UI: Show limit
+        const posCountEl = document.getElementById('pos-count');
+        if (posCountEl) posCountEl.innerText = `${positions.length} / ${ACTIVE_TRADE_LIMIT}`;
+
         if (positions.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-12 text-gray-600 italic">Scanning Top 50 Pairs... Logic State: ${app.bot.consecutiveLosses > 2 ? 'CAUTIOUS' : 'AGGRESSIVE'}</td></tr>`;
-            safeSetText('pos-count', '0');
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-12 text-gray-600 italic">Smart Engine scanning... Waiting for setup.</td></tr>`;
+            
+            // Even if empty, update balance display
+            app.bot.equity = app.bot.balance;
+            safeSetText('equity-display', fmt.usd(app.bot.equity));
+            safeSetText('available-balance', fmt.usd(app.bot.balance));
             return;
         }
-
-        safeSetText('pos-count', positions.length);
         
         let html = '';
         let totalUnrealized = 0;
@@ -823,14 +911,24 @@ const CURATED_SAFE_LIST = [
         positions.forEach(p => {
             totalUnrealized += p.pnl;
             const pnlClass = p.pnl >= 0 ? 'text-green-400' : 'text-red-400';
-            const roe = ((p.pnl / (p.sizeUSD / LEVERAGE)) * 100).toFixed(2);
+            const roe = ((p.pnl / p.totalMargin) * 100).toFixed(2);
             
-            const curr = app.coins[p.symbol]?.price || p.entry;
+            const curr = app.coins[p.symbol]?.price || p.avgEntry;
             
-            let stopDisplay = '<span class="text-gray-500 italic">Inactive (< 0.5%)</span>';
-            if (p.trailingActive) {
-                stopDisplay = `<span class="text-purple-400 font-bold font-mono">${fmt.price(p.lastStopPrice)}</span>`;
-            }
+            let actionDisplay = `<span class="text-blue-400 text-[9px] font-bold">MONITORING</span>`;
+            if (p.trailingActive) actionDisplay = `<span class="text-green-400 text-[9px] font-bold animate-pulse">TRAILING</span>`;
+            
+            // Visual DCA Bar Logic
+            const dcaPct = (p.dcaCount / 3) * 100;
+            const dcaColor = p.dcaCount === 3 ? 'bg-red-500 dca-pulse' : 'bg-blue-500';
+            const dcaBar = `
+                <div class="flex items-center gap-2 justify-end">
+                    <span class="text-blue-400 text-[10px] font-mono font-bold">${p.dcaCount} / 3</span>
+                </div>
+                <div class="dca-bar-bg">
+                    <div class="dca-fill ${dcaColor}" style="width: ${dcaPct}%"></div>
+                </div>
+            `;
 
             html += `
                 <tr class="hover:bg-[#18181b] transition border-b border-[#27272a]/50">
@@ -839,16 +937,17 @@ const CURATED_SAFE_LIST = [
                         <div class="flex flex-col"><span class="text-[13px] uppercase font-bold">${p.symbol.replace('usdt','').toUpperCase()}</span><span class="text-[10px] text-gray-500">PERP</span></div>
                     </td>
                     <td class="font-bold ${p.side==='LONG'?'text-green-400':'text-red-400'}">${p.side}</td>
-                    <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(p.entry)}</td>
+                    <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(p.avgEntry)}</td>
                     <td class="text-right font-mono text-white text-[12px] font-bold">${fmt.price(curr)}</td>
-                    <td class="text-right font-mono text-[11px]">${stopDisplay}</td>
-                    <td class="text-right font-mono text-orange-400 text-[11px]">${fmt.usd(p.sizeUSD)}</td>
+                    <td class="text-right font-mono text-[11px]">${dcaBar}</td>
+                    <td class="text-right font-mono text-orange-400 text-[11px]">${p.leverage}x (${fmt.usd(p.totalSize * curr)})</td>
                     <td class="text-right font-mono font-bold ${pnlClass}">
                         <div>${fmt.usd(p.pnl)}</div>
                         <div class="text-[10px] opacity-75">${roe}%</div>
                     </td>
                     <td class="text-center pr-4 text-[10px] font-mono leading-tight">
-                        <button onclick="closePosition('${p.symbol}', ${curr}, 'MANUAL')" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-2 py-1 rounded transition">CLOSE</button>
+                        ${actionDisplay}
+                        <div class="mt-1"><button onclick="closePosition('${p.symbol}', ${curr}, 'MANUAL')" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-2 py-0.5 rounded transition text-[9px]">CLOSE</button></div>
                     </td>
                 </tr>
             `;
@@ -857,7 +956,11 @@ const CURATED_SAFE_LIST = [
         tbody.innerHTML = html;
         app.bot.equity = app.bot.balance + totalUnrealized;
         safeSetText('equity-display', fmt.usd(app.bot.equity));
-        safeSetText('available-balance', fmt.usd(app.bot.balance));
+        
+        // Update Available Balance (Cash - Margin Used)
+        const available = app.bot.balance - totalMarginUsed;
+        safeSetText('available-balance', fmt.usd(available));
+        
         safeSetText('pnl-display', fmt.usd(totalUnrealized));
         
         const pnlEl = document.getElementById('pnl-display');
@@ -866,50 +969,62 @@ const CURATED_SAFE_LIST = [
 
     function updateHistoryUI() {
         let calcNetRealized = 0;
-        let calcWins = 0;
-        let calcLosses = 0;
-        let calcGrossProfit = 0;
-        let calcGrossLoss = 0;
+        let grossProfit = 0;
+        let grossLoss = 0;
 
         app.bot.tradeHistory.forEach(t => {
             calcNetRealized += t.netPnl;
-            if (t.rawPnl > 0) { calcGrossProfit += t.rawPnl; calcWins++; } 
-            else { calcGrossLoss += Math.abs(t.rawPnl); calcLosses++; }
+            // Gross PnL is Net PnL + Total Fees
+            const gross = t.netPnl + t.fee; 
+            if(gross > 0) grossProfit += gross;
+            else grossLoss += gross;
         });
 
         const tbody = document.getElementById('history-body');
         const rows = app.bot.tradeHistory.slice(0, 50); 
         
         if (rows.length === 0) {
-            tbody.innerHTML = '<tr class="text-center"><td colspan="10" class="py-4 text-gray-600 italic">No history available.</td></tr>';
+            tbody.innerHTML = '<tr class="text-center"><td colspan="13" class="py-4 text-gray-600 italic">No history available.</td></tr>';
         } else {
-            tbody.innerHTML = rows.map(t => `
+            tbody.innerHTML = rows.map(t => {
+                // Determine Percentage PnL
+                const sideMult = t.side === 'LONG' ? 1 : -1;
+                const rawPct = ((t.exit - t.entry) / t.entry) * 100 * sideMult;
+                
+                // Gross PnL
+                const gross = t.netPnl + t.fee;
+                const grossColor = gross >= 0 ? 'text-green-400' : 'text-red-400';
+
+                return `
                 <tr class="hover:bg-[#18181b] border-b border-[#27272a]">
                     <td class="pl-6 text-gray-500 text-[11px] font-mono">${fmt.time(t.time)}</td>
                     <td class="font-bold text-white text-[11px]">${t.symbol}</td>
-                    <td class="${t.side==='LONG'?'text-green-400':'text-red-400'} font-bold text-[10px]">${t.side}</td>
-                    <td class="text-[10px] text-blue-300 font-mono">${t.action}</td>
-                    <td class="text-right font-mono text-gray-500 text-[11px]">${t.duration}</td>
+                    <td class="font-bold ${t.side==='LONG'?'text-green-400':'text-red-400'} text-[10px]">${t.side}</td>
+                    <td class="text-gray-300 font-bold text-[10px]">${t.type}</td>
+                    <td class="text-[10px] text-blue-300 font-mono">${t.logic}</td>
+                    <td class="text-[10px] text-gray-500 font-mono">${fmt.duration(t.duration)}</td>
                     <td class="text-right font-mono text-gray-300 text-[11px]">${fmt.usd(t.size)}</td>
                     <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(t.entry)}</td>
                     <td class="text-right font-mono text-gray-400 text-[11px]">${fmt.price(t.exit)}</td>
-                    <td class="text-right font-mono text-orange-400 text-[11px]">${fmt.usd(t.fees)}</td>
-                    <td class="text-right pr-6 font-mono font-bold text-[11px] ${(t.netPnl>=0?'text-green-400':'text-red-400')}">${fmt.usd(t.netPnl)}</td>
+                    <td class="text-right font-mono ${grossColor} text-[11px]">${fmt.usd(gross)}</td>
+                    <td class="text-right font-mono text-orange-400 text-[11px]">${fmt.usd(t.fee)}</td>
+                    <td class="text-right font-mono font-bold text-[11px] ${(t.netPnl>=0?'text-green-400':'text-red-400')}">${fmt.usd(t.netPnl)}</td>
+                    <td class="text-right pr-6 font-mono font-bold text-[11px] ${(rawPct>=0?'text-green-400':'text-red-400')}">${rawPct.toFixed(2)}%</td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
         
-        safeSetText('realized-profit-val', fmt.usd(calcGrossProfit));
-        safeSetText('win-count', app.bot.wins);
         safeSetText('wins', app.bot.wins);
         safeSetText('losses', app.bot.losses);
-        safeSetText('loss-streak-val', app.bot.consecutiveLosses);
+        
+        // Update new metric boxes
+        safeSetText('total-fees-val', fmt.usd(app.bot.feesPaid));
+        safeSetText('gross-profit-val', fmt.usd(grossProfit));
+        safeSetText('gross-loss-val', fmt.usd(grossLoss));
         
         const total = app.bot.wins + app.bot.losses;
         const wr = total > 0 ? ((app.bot.wins / total) * 100).toFixed(0) : 0;
-        
         safeSetText('win-rate', `${wr}%`);
-        safeSetText('streak-val', total);
         
         const netEl = document.getElementById('net-profit-val');
         netEl.innerText = fmt.usd(calcNetRealized);
@@ -931,14 +1046,16 @@ const CURATED_SAFE_LIST = [
 
         tbody.innerHTML = sorted.map(s => {
             const rsi = app.coins[s]?.rsi || 50;
+            const lev = getDynamicLeverage(s, app.history[s]);
             let status = "NEUTRAL";
             let color = "text-gray-500";
-            if (rsi < 30) { status = "OVERSOLD (BUY)"; color = "text-green-400 font-bold"; }
-            else if (rsi > 70) { status = "OVERBOUGHT (SELL)"; color = "text-red-400 font-bold"; }
+            if (rsi < 30) { status = "OVERSOLD"; color = "text-green-400 font-bold"; }
+            else if (rsi > 70) { status = "OVERBOUGHT"; color = "text-red-400 font-bold"; }
             
             return `
                 <tr class="border-b border-[#27272a]">
                     <td class="py-1 pl-4 text-white uppercase">${s.replace('usdt','')}</td>
+                    <td class="text-orange-400 font-bold text-[10px]">${lev}x</td>
                     <td class="${color} text-[10px]">${status}</td>
                     <td class="pr-4 text-right font-mono text-gray-300">${rsi.toFixed(1)}</td>
                 </tr>
@@ -946,16 +1063,22 @@ const CURATED_SAFE_LIST = [
         }).join('');
     }
 
+    // MISSING FUNCTION RESTORED HERE
     function showFlash(side, symbol, reason) { 
         const overlay = document.getElementById('trade-flash'); 
         const msg = document.getElementById('flash-msg'); 
         const sub = document.getElementById('flash-reason'); 
-        overlay.className = side === 'LONG' || side === 'BUY' ? 'flash-long' : 'flash-short'; 
+        
+        if (side === 'LONG' || side === 'BUY') overlay.className = 'flash-long';
+        else if (side === 'REVERSE') overlay.className = 'flash-reverse';
+        else if (side === 'DCA') overlay.className = 'flash-dca';
+        else overlay.className = 'flash-short';
+
         msg.innerText = `${side} ${symbol}`; 
         sub.innerText = reason || ""; 
         sub.style.display = reason ? "block" : "none"; 
         overlay.style.display = 'flex'; 
-        setTimeout(() => { overlay.style.display = 'none'; }, 3000); 
+        setTimeout(() => { overlay.style.display = 'none'; }, 2000); 
     }
 
     // --- CHART SETUP ---
@@ -1005,7 +1128,7 @@ const CURATED_SAFE_LIST = [
     function closeAllPositions() { 
         Object.keys(app.bot.positions).forEach(k => {
             const p = app.bot.positions[k];
-            closePosition(k, app.coins[k.toLowerCase()]?.price || p.entry, "PANIC_CLOSE");
+            closePosition(k, app.coins[k.toLowerCase()]?.price || p.avgEntry, "PANIC_CLOSE");
         });
     }
     function exportCSV() { alert("Exporting Real-Time Data Log..."); }
